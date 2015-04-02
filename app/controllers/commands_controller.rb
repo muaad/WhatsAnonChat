@@ -7,12 +7,10 @@ class CommandsController < ApplicationController
 	  		if message.downcase == "join"
 	  			contact = Contact.find_or_create_by!(phone_number: params[:phone_number])
 	  			contact.update(name: params[:name])
+	  			set_country params[:phone_number]
 	  			send_message params[:phone_number], "Hi #{contact.name}, \nWelcome to this service. Now, all that is left for you to use this service is to complete your profile."
 	  			current = Progress.create! contact: contact, step: Step.first
 	  			send_message params[:phone_number], current.step.prompt
-	  	# 		contact.complete_profile(current.step, message)
-				# current.update(step_id: current.step.next_step_id)
-	  			# update_profile message, params[:phone_number]
 	  		else
 	  			send_message(params[:phone_number], "Looks like you are new to us. Please send 'Join' if you want to be added to this service. Thanks.")
 	  		end
@@ -27,17 +25,6 @@ class CommandsController < ApplicationController
 	  			HTTParty.post("http://localhost:3000/#{command(message).action_path}", body: params)
 	  		end
 	  	end
-	  	# if is_command message
-	  	# 	contact = Contact.find_by!(phone_number: params[:phone_number])
-	  	# 	if contact.nil?
-	  	# 		# Looks like you are new to us. Please send "Join" if you want to be added to this service. Thanks.
-	  	# 	else
-	  	# 		HTTParty.post(command(message).action_path, body: params)
-	  	# 	end
-	  	# else#if message.downcase == "join"
-	  	# 	contact = Contact.find_or_create_by!(phone_number: params[:phone_number])
-	  	# 	contact.update(name: params[:name])
-	  	# end
 	  	render json: {succes: true}
   	else
   		render json: {succes: true}
@@ -110,5 +97,14 @@ class CommandsController < ApplicationController
 
   def is_command message
   	message.start_with?("/")
+  end
+
+  def set_country phone_number
+  	contact = Contact.find_by(phone_number: phone_number)
+  	country_code = Phony.split(phone_number)[0]
+  	country = Country.find_all_by_country_code(country_code)[0][1]["name"]
+  	# short_name = Country.find_all_by_country_code(country_code)[0][1]["alpha2"].downcase
+  	contact.country = country
+  	contact.save!
   end
 end
