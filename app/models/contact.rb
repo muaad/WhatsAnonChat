@@ -22,6 +22,14 @@ class Contact < ActiveRecord::Base
   	username.nil? || gender.nil? || age.nil?
   end
 
+  def male
+  	!gender.nil? && gender == "Male"
+  end
+
+  def female
+  	!gender.nil? && gender == "Female"
+  end
+
   def set_country phone_number
   	country_code = Phony.format(phone_number).split(" ")[0].gsub("+", "")
   	country = Country.find_all_by_country_code(country_code)[0][1]["name"]
