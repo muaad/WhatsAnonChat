@@ -16,10 +16,10 @@ class CommandsController < ApplicationController
 	  		else
 	  			send_message(params[:phone_number], "Looks like you are new to us. Please send 'Join' if you want to be added to this service. Thanks.")
 	  		end
-	  	elsif Contact.profile_incomplete(contact.id)
+	  	elsif !Contact.profile_incomplete(contact.id).empty?
 	  		update_profile message, params[:phone_number]
-	  	else
-
+	  	elsif is_command message
+	  		HTTParty.post("http://localhost:3000#{parse_message(message).action_path}", body: params)
 	  	end
 	  	# if is_command message
 	  	# 	contact = Contact.find_by!(phone_number: params[:phone_number])
@@ -57,16 +57,24 @@ class CommandsController < ApplicationController
   	end
   end
 
+  def help
+  	commands = "These is a list of the available commands:\n"
+  	Command.all.each{|c| commands << "#{c.name}\t-\t#{c.description}\n"}
+  	commands << "If you want to start chatting with someone, add '@' before their username e.g. @muaad."
+  	send_message params[:phone_number], commands
+  	render json: {succes: true}
+  end
+
   def outgoing
   end
 
   def send_message phone_number, message
-  	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=658b6fb4475bd2c58059f7dbd301f2b0", body: {phone_number: phone_number, text: message, thread: true})
+  	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{ONGAIR_TOKEN}", body: {phone_number: phone_number, text: message, thread: true})
   end
 
   def parse_message message
   	if is_command message
-  		return Command.find_by(name: message.split("/")[1])
+  		return Command.find_by(name: message)
   	end
   end
 
