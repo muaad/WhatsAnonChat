@@ -11,7 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150401114652) do
+ActiveRecord::Schema.define(version: 20150402135322) do
+
+  create_table "contacts", force: :cascade do |t|
+    t.string   "name"
+    t.string   "phone_number"
+    t.string   "gender"
+    t.integer  "age"
+    t.string   "country"
+    t.string   "username"
+    t.boolean  "opted_id",     default: true
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  create_table "progresses", force: :cascade do |t|
+    t.integer  "contact_id"
+    t.integer  "step_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "progresses", ["contact_id"], name: "index_progresses_on_contact_id"
+  add_index "progresses", ["step_id"], name: "index_progresses_on_step_id"
+
+  create_table "steps", force: :cascade do |t|
+    t.string   "name"
+    t.string   "step_type"
+    t.integer  "next_step_id"
+    t.text     "prompt"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false

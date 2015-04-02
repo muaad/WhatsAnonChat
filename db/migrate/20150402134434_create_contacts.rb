@@ -2,12 +2,12 @@ class CreateContacts < ActiveRecord::Migration
   def change
     create_table :contacts do |t|
       t.string :name
-      t.string :phone_number
+      t.string :phone_number, unique: true
       t.string :gender
       t.integer :age
       t.string :country
-      t.string :username
-      t.boolean :opted_id
+      t.string :username, unique: true
+      t.boolean :opted_id, default: true
 
       t.timestamps null: false
     end
