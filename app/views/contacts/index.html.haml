@@ -1,0 +1,33 @@
+%h1 Listing contacts
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Phone number
+      %th Gender
+      %th Age
+      %th Country
+      %th Username
+      %th Opted
+      %th
+      %th
+      %th
+
+  %tbody
+    - @contacts.each do |contact|
+      %tr
+        %td= contact.name
+        %td= contact.phone_number
+        %td= contact.gender
+        %td= contact.age
+        %td= contact.country
+        %td= contact.username
+        %td= contact.opted_id
+        %td= link_to 'Show', contact
+        %td= link_to 'Edit', edit_contact_path(contact)
+        %td= link_to 'Destroy', contact, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Contact', new_contact_path

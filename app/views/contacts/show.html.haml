@@ -1,0 +1,27 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @contact.name
+%p
+  %b Phone number:
+  = @contact.phone_number
+%p
+  %b Gender:
+  = @contact.gender
+%p
+  %b Age:
+  = @contact.age
+%p
+  %b Country:
+  = @contact.country
+%p
+  %b Username:
+  = @contact.username
+%p
+  %b Opted:
+  = @contact.opted_id
+
+= link_to 'Edit', edit_contact_path(@contact)
+\|
+= link_to 'Back', contacts_path
