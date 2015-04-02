@@ -16,10 +16,16 @@ class CommandsController < ApplicationController
 	  		else
 	  			send_message(params[:phone_number], "Looks like you are new to us. Please send 'Join' if you want to be added to this service. Thanks.")
 	  		end
-	  	elsif !Contact.profile_incomplete(contact.id).empty?
+	  	elsif contact.profile_incomplete
 	  		update_profile message, params[:phone_number]
 	  	elsif is_command message
-	  		HTTParty.post("http://localhost:3000#{parse_message(message).action_path}", body: params)
+	  		if parse_message(message).nil?
+	  			msg = "Sorry. We couldn't recognize that command. Here is a list of the commands we support:\n\n"
+	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n"}
+	  			send_message(params[:phone_number], msg)
+	  		else
+	  			HTTParty.post("http://localhost:3000#{parse_message(message).action_path}", body: params)
+	  		end
 	  	end
 	  	# if is_command message
 	  	# 	contact = Contact.find_by!(phone_number: params[:phone_number])
@@ -58,9 +64,9 @@ class CommandsController < ApplicationController
   end
 
   def help
-  	commands = "These is a list of the available commands:\n"
+  	commands = "This is a list of the available commands:\n\n"
   	Command.all.each{|c| commands << "#{c.name}\t-\t#{c.description}\n"}
-  	commands << "If you want to start chatting with someone, add '@' before their username e.g. @muaad."
+  	commands << "\nIf you want to start chatting with someone, add '@' before their username e.g. \n@muaad: Hi. How are you?."
   	send_message params[:phone_number], commands
   	render json: {succes: true}
   end
@@ -69,7 +75,7 @@ class CommandsController < ApplicationController
   end
 
   def send_message phone_number, message
-  	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{ONGAIR_TOKEN}", body: {phone_number: phone_number, text: message, thread: true})
+  	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
   end
 
   def parse_message message
