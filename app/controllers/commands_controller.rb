@@ -19,12 +19,12 @@ class CommandsController < ApplicationController
 	  	elsif contact.profile_incomplete
 	  		update_profile message, params[:phone_number]
 	  	elsif is_command message
-	  		if parse_message(message).nil?
+	  		if command(message).nil?
 	  			msg = "Sorry. We couldn't recognize that command. Here is a list of the commands we support:\n\n"
 	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n"}
 	  			send_message(params[:phone_number], msg)
 	  		else
-	  			HTTParty.post("http://localhost:3000#{parse_message(message).action_path}", body: params)
+	  			HTTParty.post("http://localhost:3000/#{command(message).action_path}", body: params)
 	  		end
 	  	end
 	  	# if is_command message
@@ -32,7 +32,7 @@ class CommandsController < ApplicationController
 	  	# 	if contact.nil?
 	  	# 		# Looks like you are new to us. Please send "Join" if you want to be added to this service. Thanks.
 	  	# 	else
-	  	# 		HTTParty.post(parse_message(message).action_path, body: params)
+	  	# 		HTTParty.post(command(message).action_path, body: params)
 	  	# 	end
 	  	# else#if message.downcase == "join"
 	  	# 	contact = Contact.find_or_create_by!(phone_number: params[:phone_number])
@@ -71,6 +71,21 @@ class CommandsController < ApplicationController
   	render json: {succes: true}
   end
 
+  def invite
+  	command_params(params[:text]).split(",").each do |phone_number|
+  		contact = Contact.find_by(phone_number: phone_number)
+  		if contact.nil?
+  			send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number])} to try out this service which lets you
+  			chat on WhatsApp annonymously. Find interesting people outside your contacts and chat with them without revealing your number.
+  			 You can try it out by adding this number to your contacts and replying to this message with the word 'JOIN'. Don't worry. 
+  			 You can opt out any time and no one will bother you anymore."
+  		else
+  			send_message params[:phone_number], "#{phone_number} is already registered. You can chat with #{contact.male ? 'him' : 'her'} at @#{contact.username.downcase}."
+  		end
+  	end
+  	render json: {succes: true}
+  end
+
   def outgoing
   end
 
@@ -78,10 +93,14 @@ class CommandsController < ApplicationController
   	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
   end
 
-  def parse_message message
+  def command message
   	if is_command message
-  		return Command.find_by(name: message)
+  		return Command.find_by(name: message.split("/")[1].downcase.strip)
   	end
+  end
+
+  def command_params message
+  	message.split("/")[2]
   end
 
   def is_command message
