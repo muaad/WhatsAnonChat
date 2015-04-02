@@ -7,7 +7,7 @@ class CreateContacts < ActiveRecord::Migration
       t.integer :age
       t.string :country
       t.string :username, unique: true
-      t.boolean :opted_id, default: true
+      t.boolean :opted_id, default: false
 
       t.timestamps null: false
     end
