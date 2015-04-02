@@ -75,6 +75,7 @@ class CommandsController < ApplicationController
   	command_params(params[:text]).split(",").each do |phone_number|
   		contact = Contact.find_by(phone_number: phone_number)
   		if contact.nil?
+  			create_ongair_contact phone_number
   			send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number])} to try out this service which lets you
   			chat on WhatsApp annonymously. Find interesting people outside your contacts and chat with them without revealing your number.
   			 You can try it out by adding this number to your contacts and replying to this message with the word 'JOIN'. Don't worry. 
@@ -91,6 +92,10 @@ class CommandsController < ApplicationController
 
   def send_message phone_number, message
   	HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
+  end
+
+  def create_ongair_contact phone_number
+  	HTTParty.post("http://app.ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
   end
 
   def command message
