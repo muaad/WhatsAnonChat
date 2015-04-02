@@ -18,6 +18,9 @@ gem 'devise'
 gem 'figaro', '>= 1.0.0.rc1'
 gem 'haml-rails'
 gem 'httparty'
+gem 'annotate'
+gem 'phony_rails'
+gem 'countries'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_20]
