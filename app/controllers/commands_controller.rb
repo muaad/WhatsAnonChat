@@ -74,6 +74,41 @@ class CommandsController < ApplicationController
   	render json: {succes: true}
   end
 
+  def search
+  	# age:22-25,gender:Male,country:Kenya
+  	query = ""
+  	command_params(params[:text]).split(",").each do |q|
+  		if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
+  			query << "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
+  		elsif q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 1
+  			query << "age == #{q.split(":")[1]}"
+  		# elsif q.split(":")[0].downcase == "age"
+  			
+  		end
+  		if q.split(":")[0].downcase != "age"
+  			query << " AND #{q.split(":")[0]} like '#{q.split(":")[1]}'"
+  		end
+  	end
+  	puts query
+  	contacts = []
+  	begin
+  		contacts = Contact.where(query)
+  	rescue Exception => e
+  		# puts "><><><><><>< Error"
+  		# contacts = []
+  		# msg = "We couldn't understand your search query."
+  	end
+  	msg = ""
+  	if contacts.empty?
+  		msg = "Sorry. We could not find anyone matching your search query. Try again."
+  	else
+  		msg = "We have found #{contacts.count} results:\n\n"
+  		contacts.each{|c| msg << "@#{c.username.downcase}\n#{c.age}\t|\t#{c.gender}\t|\t#{c.country}\n"}
+  	end
+  	send_message params[:phone_number], msg
+  	render json: {succes: true}
+  end
+
   def outgoing
   end
 
