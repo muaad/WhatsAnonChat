@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   post "/help" => "commands#help", as: "help"
   post "/invite" => "commands#invite", as: "invite"
   post "/search" => "commands#search", as: "search"
+  post "/friends" => "commands#friends", as: "friends"
 
   get 'commands/outgoing'
 

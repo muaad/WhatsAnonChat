@@ -62,7 +62,10 @@ class CommandsController < ApplicationController
 	  				send_message recipient.phone_number, "@#{sender.username}: #{message}"
 	  				Message.create! chat: chat, body: message.split(":")[1]
 	  			else
-	  				send_message params[:phone_number], "Looks like you don't have an active chat. To get help with how this service works, reply with /help."
+	  				send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
+	  				start your message with '@username:' and replace 'username' with the username of a friend. 
+	  				To get a list of the people you have been chatting with, reply with '/friends'. 
+	  				To get some help using this service, reply with '/help'."
 	  			end
 	  		end
 	  	end
@@ -145,6 +148,23 @@ class CommandsController < ApplicationController
   	else
   		msg = "We have found #{contacts.count} results:\n\n"
   		contacts.each{|c| msg << "@#{c.username.downcase}\n#{c.age}\t|\t#{c.gender}\t|\t#{c.country}\n"}
+  	end
+  	send_message params[:phone_number], msg
+  	render json: {succes: true}
+  end
+
+  def friends
+  	msg = "Here is a list of people you have chat with:\n\n"
+  	sender = Contact.find_by(phone_number: params[:phone_number])
+  	chats = Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id)
+  	chats.each do |chat|
+  		recipient = nil
+  		if chat.contact == sender
+  			recipient = chat.friend
+  		else
+  			recipient = chat.contact
+  		end
+  		msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
   	end
   	send_message params[:phone_number], msg
   	render json: {succes: true}
