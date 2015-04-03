@@ -22,7 +22,7 @@ class CommandsController < ApplicationController
 	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n"}
 	  			send_message(params[:phone_number], msg)
 	  		else
-	  			HTTParty.post("http://localhost:3000/#{command(message).action_path}", body: params)
+	  			HTTParty.post("#{Rails.application.secrets.root_url}#{command(message).action_path}", body: params)
 	  		end
 	  	else
 	  		if message.start_with?("@")
