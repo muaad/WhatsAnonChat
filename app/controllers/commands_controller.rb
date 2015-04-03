@@ -24,6 +24,47 @@ class CommandsController < ApplicationController
 	  		else
 	  			HTTParty.post("http://localhost:3000/#{command(message).action_path}", body: params)
 	  		end
+	  	else
+	  		if message.start_with?("@")
+	  			username = message.split(":")[0].gsub("@", "")
+	  			recipient = Contact.where("username like ?", username).first
+	  			sender = Contact.find_by(phone_number: params[:phone_number])
+	  			if !recipient.nil?
+	  				chats = Chat.where("contact_id = ? AND friend_id = ? OR contact_id = ? AND friend_id = ?", 
+	  					sender.id, recipient.id, recipient.id, sender.id)
+	  				if chats.empty?
+	  					Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id).update_all(active: false)
+	  					chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
+	  					Message.create! chat: chat, body: message.split(":")[1]
+	  				else
+	  					chat = chats.first
+	  					chat.update(active: true)
+	  					Message.create! chat: chat, body: message.split(":")[1]
+	  				end
+	  				send_message recipient.phone_number, "@#{sender.username}: #{message.split(":")[1]}"
+	  				# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
+	  				# Message.create! chat: chat, body: message.split(":")[1]
+	  			else
+	  				send_message params[:phone_number], "There is no user with the username @#{username}."
+	  			end
+	  		else
+	  			sender = Contact.find_by(phone_number: params[:phone_number])
+	  			chats = Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, sender.id, sender.id)
+	  			if !chats.empty?
+	  				sender = Contact.find_by(phone_number: params[:phone_number])
+	  				recipient = nil
+	  				chat = chats.first
+	  				if chat.contact == sender
+	  					recipient = chat.friend
+	  				else
+	  					recipient = chat.contact
+	  				end
+	  				send_message recipient.phone_number, "@#{sender.username}: #{message}"
+	  				Message.create! chat: chat, body: message.split(":")[1]
+	  			else
+	  				send_message params[:phone_number], "Looks like you don't have an active chat. To get help with how this service works, reply with /help."
+	  			end
+	  		end
 	  	end
 	  	render json: {succes: true}
   	else
@@ -52,7 +93,7 @@ class CommandsController < ApplicationController
 
   def help
   	commands = "This is a list of the available commands:\n\n"
-  	Command.all.each{|c| commands << "#{c.name}\t-\t#{c.description}\n"}
+  	Command.all.each{|c| commands << "/#{c.name}\t-\t#{c.description}\n\n"}
   	commands << "\nIf you want to start chatting with someone, add '@' before their username e.g. \n@muaad: Hi. How are you?."
   	send_message params[:phone_number], commands
   	render json: {succes: true}
@@ -63,7 +104,7 @@ class CommandsController < ApplicationController
   		contact = Contact.find_by(phone_number: phone_number)
   		if contact.nil?
   			create_ongair_contact phone_number
-  			send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number])} to try out this service which lets you
+  			send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number]).username} to try out this service which lets you
   			chat on WhatsApp annonymously. Find interesting people outside your contacts and chat with them without revealing your number.
   			 You can try it out by adding this number to your contacts and replying to this message with the word 'JOIN'. Don't worry. 
   			 You can opt out any time and no one will bother you anymore."

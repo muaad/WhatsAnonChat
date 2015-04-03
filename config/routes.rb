@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :chats
+
   post "incoming" => "commands#incoming"
   post "/help" => "commands#help", as: "help"
   post "/invite" => "commands#invite", as: "invite"

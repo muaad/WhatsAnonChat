@@ -1,6 +1,8 @@
 class Contact < ActiveRecord::Base
 	has_many :progress, dependent: :delete_all
   has_many :steps, through: :progress
+  has_many :chats
+  has_many :friends, :through => :chats
 
   # scope	:profile_incomplete, -> { where("username = NULL OR gender = NULL OR age = NULL") }
   scope :profile_incomplete, (lambda do |id|

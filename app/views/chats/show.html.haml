@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Contact:
+  = @chat.contact_id
+%p
+  %b Friend:
+  = @chat.friend_id
+%p
+  %b Active:
+  = @chat.active
+
+= link_to 'Edit', edit_chat_path(@chat)
+\|
+= link_to 'Back', chats_path
