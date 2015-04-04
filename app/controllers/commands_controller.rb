@@ -170,6 +170,14 @@ class CommandsController < ApplicationController
   	render json: {succes: true}
   end
 
+  def spin
+  	current_contact = Contact.find_by(phone_number: params[:phone_number])
+  	contact = Contact.where.not(id: current_contact.id).order("RANDOM()").first
+  	msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
+  	send_message params[:phone_number], msg
+  	render json: {succes: true}
+  end
+
   def outgoing
   end
 

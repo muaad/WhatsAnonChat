@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   post "/invite" => "commands#invite", as: "invite"
   post "/search" => "commands#search", as: "search"
   post "/friends" => "commands#friends", as: "friends"
+  post "/spin" => "commands#spin", as: "spin"
 
   get 'commands/outgoing'
 
