@@ -45,3 +45,6 @@ group :test do
   gem 'launchy'
   gem 'selenium-webdriver'
 end
+group :production do
+  gem 'mysql2'
+end
