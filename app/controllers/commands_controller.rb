@@ -24,6 +24,10 @@ class CommandsController < ApplicationController
 	  		else
 	  			HTTParty.post("#{Rails.application.secrets.root_url}#{command(message).action_path}", body: params)
 	  		end
+	  	elsif message.downcase == "leave"
+	  		contact.chats.delete_all
+	  		contact.destroy
+	  		send_message params[:phone_number], "All your details have been removed from the service. We shall miss you. If you miss us, send 'JOIN' again. You are welcome back anytime."
 	  	else
 	  		if message.start_with?("@")
 	  			username = message.split(":")[0].gsub("@", "")
