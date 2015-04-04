@@ -29,4 +29,12 @@ class Contact < ActiveRecord::Base
   def female
   	!gender.nil? && gender == "Female"
   end
+
+  def chats
+    Chat.where("contact_id = ? OR friend_id = ?", id, id)
+  end
+
+  def active_chats
+    Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, id, id)
+  end
 end

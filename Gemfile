@@ -21,6 +21,7 @@ gem 'httparty'
 gem 'annotate'
 gem 'phony_rails'
 gem 'countries'
+gem 'rails_admin'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_20]

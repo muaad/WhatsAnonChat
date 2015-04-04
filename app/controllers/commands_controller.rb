@@ -19,7 +19,7 @@ class CommandsController < ApplicationController
 	  	elsif is_command message
 	  		if command(message).nil?
 	  			msg = "Sorry. We couldn't recognize that command. Here is a list of the commands we support:\n\n"
-	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n"}
+	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n\n"}
 	  			send_message(params[:phone_number], msg)
 	  		else
 	  			HTTParty.post("#{Rails.application.secrets.root_url}#{command(message).action_path}", body: params)
@@ -41,7 +41,7 @@ class CommandsController < ApplicationController
 	  					chat.update(active: true)
 	  					Message.create! chat: chat, body: message.split(":")[1]
 	  				end
-	  				send_message recipient.phone_number, "@#{sender.username}: #{message.split(":")[1]}"
+	  				send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message.split(":")[1]}"
 	  				# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
 	  				# Message.create! chat: chat, body: message.split(":")[1]
 	  			else
@@ -49,8 +49,8 @@ class CommandsController < ApplicationController
 	  			end
 	  		else
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
-	  			chats = Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, sender.id, sender.id)
-	  			if !chats.empty?
+	  			# chats = Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, sender.id, sender.id)
+	  			if !sender.active_chats.empty?
 	  				sender = Contact.find_by(phone_number: params[:phone_number])
 	  				recipient = nil
 	  				chat = chats.first
@@ -156,8 +156,8 @@ class CommandsController < ApplicationController
   def friends
   	msg = "Here is a list of people you have chat with:\n\n"
   	sender = Contact.find_by(phone_number: params[:phone_number])
-  	chats = Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id)
-  	chats.each do |chat|
+  	# chats = Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id)
+  	sender.chats.each do |chat|
   		recipient = nil
   		if chat.contact == sender
   			recipient = chat.friend
