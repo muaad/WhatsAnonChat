@@ -1,3 +1,4 @@
+require 'twitter_api'
 class Command < ActiveRecord::Base
 	def self.help params
 		commands = "This is a list of the available commands:\n\n"
@@ -64,6 +65,13 @@ class Command < ActiveRecord::Base
 		contact = Contact.where.not(id: current_contact.id).order("RANDOM()").first
 		msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
 		send_message params[:phone_number], msg
+	end
+
+	def self.news params
+		twitter = TwitterApi.new
+		tweets = "Here are the latest 5 stories making headlines on the Daily Nation:\n\n"
+		twitter.tweets("dailynation", 5).each{|t| tweets << "#{t.text}\n\n"}
+		send_message params[:phone_number], tweets
 	end
 
 	def self.search_query text
