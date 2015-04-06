@@ -32,7 +32,7 @@ class CommandsController < ApplicationController
 	  	else
 	  		if message.start_with?("@")
 	  			username = message.split(":")[0].gsub("@", "")
-	  			recipient = Contact.where("username like ?", username).first
+	  			recipient = Contact.where("username ilike ?", username).first
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
 	  			if !recipient.nil?
 	  				chats = Chat.where("contact_id = ? AND friend_id = ? OR contact_id = ? AND friend_id = ?", 

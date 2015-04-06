@@ -72,23 +72,23 @@ class Command < ActiveRecord::Base
 		q_others = ""
 		text.split(",").each do |q|
 			if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
-				q_age = "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
+				from = q.split(":")[1].split("-")[0]
+				to = q.split(":")[1].split("-")[1]
+				# q_age = "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
+				q_age = "age between #{from} AND #{to}" 
 			elsif q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 1
-				q_age = "age == #{q.split(":")[1]}"
+				q_age = "age = #{q.split(":")[1]}"
 			# elsif q.split(":")[0].downcase == "age"
 				
 			end
 			if q.split(":")[0].downcase != "age"
-				q_others << " AND #{q.split(":")[0]} like '#{q.split(":")[1]}'"
+				q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
 			# else
 			# 	query << " #{q.split(":")[0]} like '#{q.split(":")[1]}'"
 			end
 		end
-		puts ">>>>>>>#{q_others}"
 		if q_age.empty?
 			query = q_others.sub!(" AND ", "")
-			puts ">>>>>>>#{q_others}"
-			puts ">>>>>>>#{query}"
 		else
 			query = q_age + q_others
 		end
