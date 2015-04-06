@@ -22,6 +22,8 @@ gem 'annotate'
 gem 'phony_rails'
 gem 'countries'
 gem 'rails_admin'
+gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
+gem 'mysql2'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_20]
@@ -46,5 +48,5 @@ group :test do
   gem 'selenium-webdriver'
 end
 group :production do
-  gem 'mysql2'
+  gem 'pg'
 end
