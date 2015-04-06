@@ -74,6 +74,12 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], tweets
 	end
 
+	def self.jokes params
+		twitter = TwitterApi.new
+		joke = twitter.tweets("best_jokes", 20).sample.text
+		send_message params[:phone_number], joke
+	end
+
 	def self.search_query text
 		query = ""
 		q_age = ""
