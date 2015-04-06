@@ -80,6 +80,10 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], joke
 	end
 
+	def self.games params
+		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
+	end
+
 	def self.search_query text
 		query = ""
 		q_age = ""
