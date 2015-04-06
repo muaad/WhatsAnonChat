@@ -8,6 +8,9 @@ class Contact < ActiveRecord::Base
 
   def complete_profile step, value
   	begin
+      if step.name.downcase == "username"
+        value = value.downcase
+      end
   		update("#{step.name.downcase}" => value)
   	rescue Exception => e
   		
