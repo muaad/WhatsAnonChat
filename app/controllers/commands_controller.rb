@@ -68,7 +68,7 @@ class CommandsController < ApplicationController
 	  					recipient = chat.contact
 	  				end
 	  				send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
-	  				Message.create! chat: chat, body: message.split(":")[1]
+	  				Message.create! chat: chat, body: message
 	  			else
 	  				send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
 	  				start your message with '@username:' and replace 'username' with the username of a friend. 
