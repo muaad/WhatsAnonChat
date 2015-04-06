@@ -39,10 +39,13 @@ class CommandsController < ApplicationController
 	  					sender.id, recipient.id, recipient.id, sender.id)
 	  				if chats.empty?
 	  					Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id).update_all(active: false)
+	  					Chat.where("contact_id = ? OR friend_id = ?", recipient.id, recipient.id).update_all(active: false)
 	  					chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
 	  					Message.create! chat: chat, body: message.split(":")[1]
 	  				else
 	  					chat = chats.first
+	  					Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id).update_all(active: false)
+	  					Chat.where("contact_id = ? OR friend_id = ?", recipient.id, recipient.id).update_all(active: false)
 	  					chat.update(active: true)
 	  					Message.create! chat: chat, body: message.split(":")[1]
 	  				end
