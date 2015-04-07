@@ -70,20 +70,24 @@ class Command < ActiveRecord::Base
 	def self.news params
 		source = "dailynation"
 		src = "Daily Nation"
+		category = "local"
 		if command_params(params[:text])
 			if command_params(params[:text]) == "tech"
 				source = "nytimestech"
-				src = "New York Times Tech"
+				src = "New York Times"
+				category = "technology"
 			elsif command_params(params[:text]) == "sport"
 				source = "bbcsport"
-				src = "BBC Sport"
+				src = "BBC"
+				category = "sports"
 			elsif command_params(params[:text]) == "international"
 				source = "bbcnews"
-				src = "BBC News"
+				src = "BBC"
+				category = "international news"
 			end
 		end
 		twitter = TwitterApi.new
-		tweets = "Here are the latest 5 stories making headlines on the #{src}:\n\n"
+		tweets = "Here are the latest 5 #{category} stories making headlines on the #{src}:\n\n"
 		twitter.tweets(source, 5).each{|t| tweets << "#{t.text}\n\n"}
 		send_message params[:phone_number], tweets
 	end
