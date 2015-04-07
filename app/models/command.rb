@@ -1,4 +1,5 @@
 require 'twitter_api'
+require 'cgi'
 class Command < ActiveRecord::Base
 	def self.help params
 		commands = "This is a list of the available commands:\n\n"
@@ -89,19 +90,19 @@ class Command < ActiveRecord::Base
 		twitter = TwitterApi.new
 		tweets = "Here are the latest 5 #{category} stories making headlines on the #{src}:\n\n"
 		twitter.tweets(source, 5).each{|t| tweets << "#{t.text}\n\n"}
-		send_message params[:phone_number], tweets
+		send_message params[:phone_number], CGI.escape(tweets)
 	end
 
 	def self.jokes params
 		twitter = TwitterApi.new
 		joke = (twitter.tweets("best_jokes", 20) + twitter.tweets("badjokecat", 20)).sample.text
-		send_message params[:phone_number], joke
+		send_message params[:phone_number], CGI.escape(joke)
 	end
 
 	def self.quotes params
 		twitter = TwitterApi.new
 		quote = (twitter.tweets("quotes4ursoul", 20) + twitter.tweets("inspowerminds", 20)).sample.text
-		send_message params[:phone_number], quote
+		send_message params[:phone_number], CGI.escape(quote)
 	end
 
 	def self.games params
