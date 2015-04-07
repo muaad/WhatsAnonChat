@@ -9,6 +9,6 @@ class TwitterApi
 	end
 
 	def tweets user, count
-		client.user_timeline(user).take(count)
+		client.user_timeline(user).take(count).reject{|t| t.retweet?}
 	end
 end
