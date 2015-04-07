@@ -76,7 +76,7 @@ class Command < ActiveRecord::Base
 				source = "nytimestech"
 				src = "New York Times"
 				category = "technology"
-			elsif command_params(params[:text]) == "sport"
+			elsif command_params(params[:text]) == "sport" || command_params(params[:text]) == "sports"
 				source = "bbcsport"
 				src = "BBC"
 				category = "sports"
