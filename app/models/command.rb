@@ -94,8 +94,14 @@ class Command < ActiveRecord::Base
 
 	def self.jokes params
 		twitter = TwitterApi.new
-		joke = twitter.tweets("best_jokes", 20).sample.text
+		joke = (twitter.tweets("best_jokes", 20) + twitter.tweets("badjokecat", 20)).sample.text
 		send_message params[:phone_number], joke
+	end
+
+	def self.quotes params
+		twitter = TwitterApi.new
+		quote = (twitter.tweets("quotes4ursoul", 20) + twitter.tweets("inspowerminds", 20)).sample.text
+		send_message params[:phone_number], quote
 	end
 
 	def self.games params
