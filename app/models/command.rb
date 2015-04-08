@@ -108,6 +108,21 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
 	end
 
+	def visible params
+		text = command_params(params[:text]).downcase
+		msg = ""
+		if text == "yes"
+			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: true)
+			msg = "Your account is now visible."
+		elsif text == "no"
+			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: false)
+			msg = "Your account is now invisible."
+		else
+			msg = "Please send in /visible/yes or visible/no. Thanks."
+		end
+		send_message params[:phone_number], msg
+	end
+
 	def self.search_query text
 		query = ""
 		q_age = ""
