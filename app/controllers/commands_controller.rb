@@ -16,6 +16,9 @@ class CommandsController < ApplicationController
 	  		end
 	  	elsif contact.profile_incomplete
 	  		update_profile message, params[:phone_number]
+	  		if !contact.profile_incomplete
+	  			contact.update(opted_in: true)
+	  		end
 	  	elsif is_command message
 	  		if command(message).nil?
 	  			msg = "Sorry. We couldn't recognize that command. Here is a list of the commands we support:\n\n"
