@@ -62,7 +62,7 @@ class Command < ActiveRecord::Base
 
 	def self.spin params
 		current_contact = Contact.find_by(phone_number: params[:phone_number])
-		contact = Contact.where.not(id: current_contact.id).order("RANDOM()").first
+		contact = Contact.where.not(id: current_contact.id).sample
 		msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
 		send_message params[:phone_number], msg
 	end
