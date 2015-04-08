@@ -112,27 +112,42 @@ class Command < ActiveRecord::Base
 		query = ""
 		q_age = ""
 		q_others = ""
-		text.split(",").each do |q|
-			if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
-				from = q.split(":")[1].split("-")[0]
-				to = q.split(":")[1].split("-")[1]
-				# q_age = "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
-				q_age = "age between #{from} AND #{to}" 
-			elsif q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 1
-				q_age = "age = #{q.split(":")[1]}"
-			# elsif q.split(":")[0].downcase == "age"
-				
+		if command_params(params[:text]).include?(":")
+			text.split(",").each do |q|
+				if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
+					from = q.split(":")[1].split("-")[0]
+					to = q.split(":")[1].split("-")[1]
+					# q_age = "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
+					q_age = "age between #{from} AND #{to}" 
+				elsif q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 1
+					q_age = "age = #{q.split(":")[1]}"
+				# elsif q.split(":")[0].downcase == "age"
+					
+				end
+				if q.split(":")[0].downcase != "age"
+					q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
+				# else
+				# 	query << " #{q.split(":")[0]} like '#{q.split(":")[1]}'"
+				end
 			end
-			if q.split(":")[0].downcase != "age"
-				q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
-			# else
-			# 	query << " #{q.split(":")[0]} like '#{q.split(":")[1]}'"
+			if q_age.empty?
+				query = q_others.sub!(" AND ", "")
+			else
+				query = q_age + q_others
 			end
-		end
-		if q_age.empty?
-			query = q_others.sub!(" AND ", "")
 		else
-			query = q_age + q_others
+			# a,s,l
+			age = text.split(",")[0]
+			gender = text.split(",")[1]
+			location = text.split(",")[2]
+			if age.include?("-")
+				from = age.split("-")[0]
+				to = age.split("-")[2]
+				q_age = "age between #{from} AND #{to}"
+			else
+				q_age = "age = #{age}"
+			end
+			query = "#{q_age} AND gender ilike #{gender} AND country ilike #{location}"
 		end
 		query
 	end
