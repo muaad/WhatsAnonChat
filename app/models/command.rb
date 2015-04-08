@@ -127,7 +127,7 @@ class Command < ActiveRecord::Base
 		query = ""
 		q_age = ""
 		q_others = ""
-		if command_params(params[:text]).include?(":")
+		if text.include?(":")
 			text.split(",").each do |q|
 				if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
 					from = q.split(":")[1].split("-")[0]
@@ -142,7 +142,7 @@ class Command < ActiveRecord::Base
 				if q.split(":")[0].downcase != "age"
 					q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
 				# else
-				# 	query << " #{q.split(":")[0]} like '#{q.split(":")[1]}'"
+				# 	query << " #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
 				end
 			end
 			if q_age.empty?
@@ -157,12 +157,12 @@ class Command < ActiveRecord::Base
 			location = text.split(",")[2]
 			if age.include?("-")
 				from = age.split("-")[0]
-				to = age.split("-")[2]
+				to = age.split("-")[1]
 				q_age = "age between #{from} AND #{to}"
 			else
 				q_age = "age = #{age}"
 			end
-			query = "#{q_age} AND gender ilike #{gender} AND country ilike #{location}"
+			query = "#{q_age} AND gender ilike '#{gender}' AND country ilike '#{location}'"
 		end
 		query
 	end
