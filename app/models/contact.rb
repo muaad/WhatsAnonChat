@@ -4,7 +4,7 @@ class Contact < ActiveRecord::Base
   has_many :chats
   has_many :friends, :through => :chats
 
-  scope	:opted_in, -> { where(opted_in: true) }
+  default_scope { where(opted_in: true) }
 
   def complete_profile step, value
   	begin
