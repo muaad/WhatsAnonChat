@@ -1,5 +1,6 @@
 require 'twitter_api'
 class Command < ActiveRecord::Base
+	default_scope { where(enabled: true) }
 	def self.help params
 		commands = "This is a list of the available commands:\n\n"
 		Command.all.each{|c| commands << "/#{c.name}\t-\t#{c.description}\n\n"}
