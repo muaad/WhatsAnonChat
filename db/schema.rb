@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150408155520) do
+ActiveRecord::Schema.define(version: 20150409210559) do
 
   create_table "chats", force: :cascade do |t|
     t.integer  "contact_id"
@@ -25,8 +25,9 @@ ActiveRecord::Schema.define(version: 20150408155520) do
     t.string   "name"
     t.text     "description"
     t.string   "action_path"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "enabled",     default: false
   end
 
   create_table "contacts", force: :cascade do |t|
