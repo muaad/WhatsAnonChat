@@ -49,7 +49,8 @@ class CommandsController < ApplicationController
   						chat = chats.first
   						sender.chats.update_all(active: false)
   						recipient.chats.update_all(active: false)
-  						chat.update(active: true)
+  						chat.active = true
+  						chat.save!
   						Message.create! chat: chat, body: message.split(":")[1]
   					end
   					send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message.split(":")[1]}"
