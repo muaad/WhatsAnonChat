@@ -100,13 +100,33 @@ class Command < ActiveRecord::Base
 	def self.jokes params
 		twitter = TwitterApi.new
 		joke = (twitter.tweets("best_jokes") + twitter.tweets("badjokecat")).sample.text
-		send_message params[:phone_number], joke
+		username = command_params params[:message]
+		if username
+			if Contact.find_by(username: username)
+				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a joke with you:\n\n #{joke}"
+				send_message params[:phone_number], "You have shared this joke with @#{username}:\n\n #{joke}"
+			else
+				
+			end
+		else
+			send_message params[:phone_number], joke
+		end
 	end
 
 	def self.quotes params
 		twitter = TwitterApi.new
 		quote = (twitter.tweets("quotes4ursoul") + twitter.tweets("inspowerminds")).sample.text
-		send_message params[:phone_number], quote
+		username = command_params params[:message]
+		if username
+			if Contact.find_by(username: username)
+				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a quote with you:\n\n #{quote}"
+				send_message params[:phone_number], "You have shared this quote with @#{username}:\n\n #{quote}"
+			else
+				
+			end
+		else
+			send_message params[:phone_number], quote
+		end
 	end
 
 	def self.games params
