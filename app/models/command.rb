@@ -63,9 +63,13 @@ class Command < ActiveRecord::Base
 
 	def self.spin params
 		current_contact = Contact.find_by(phone_number: params[:phone_number])
-		contact = Contact.where.not(id: current_contact.id).sample
-		msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
-		send_message params[:phone_number], msg
+		if current_contact.opted_in
+			contact = Contact.opted_in.where.not(id: current_contact.id).sample
+			msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
+			send_message params[:phone_number], msg
+		else
+			send_message params[:phone_number], "Sorry. Remember you are invisible? If people can't see you, it is only fair that you don't see them either, right? You can make yourself visible by sending in '/visible/on'."
+		end
 	end
 
 	def self.news params
@@ -88,7 +92,7 @@ class Command < ActiveRecord::Base
 			end
 		end
 		twitter = TwitterApi.new
-		tweets = "Here are the latest 5 #{category} stories making headlines on the #{src}:\n\n"
+		tweets = "Here are the 5 latest #{category} stories making headlines on the #{src}:\n\n"
 		twitter.tweets(source, 5).each{|t| tweets << "#{t.text}\n\n"}
 		send_message params[:phone_number], tweets
 	end
@@ -112,10 +116,10 @@ class Command < ActiveRecord::Base
 	def visible params
 		text = command_params(params[:text]).downcase
 		msg = ""
-		if text == "yes"
+		if text == "yes" || text == "on"
 			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: true)
 			msg = "Your account is now visible."
-		elsif text == "no"
+		elsif text == "no" || text == "off"
 			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: false)
 			msg = "Your account is now invisible."
 		else
