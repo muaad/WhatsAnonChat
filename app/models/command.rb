@@ -100,7 +100,7 @@ class Command < ActiveRecord::Base
 	def self.jokes params
 		twitter = TwitterApi.new
 		joke = (twitter.tweets("best_jokes") + twitter.tweets("badjokecat")).sample.text
-		username = command_params params[:text]
+		username = command_params(params[:text]).sub("@", "").strip
 		if username
 			if !Contact.find_by(username: username).nil?
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a joke with you:\n\n #{joke}"
@@ -116,7 +116,7 @@ class Command < ActiveRecord::Base
 	def self.quotes params
 		twitter = TwitterApi.new
 		quote = (twitter.tweets("quotes4ursoul") + twitter.tweets("inspowerminds")).sample.text
-		username = command_params params[:text]
+		username = command_params(params[:text]).sub("@", "").strip
 		if username
 			if !Contact.find_by(username: username).nil?
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a quote with you:\n\n #{quote}"
