@@ -106,7 +106,7 @@ class Command < ActiveRecord::Base
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a joke with you:\n\n #{joke}"
 				send_message params[:phone_number], "You have shared this joke with @#{username}:\n\n #{joke}"
 			else
-				send_message params[:phone_number], "You tried to share a joke with #{username} which doesn't exist."
+				send_message params[:phone_number], "You tried to share a joke with @#{username} which doesn't exist."
 			end
 		else
 			send_message params[:phone_number], joke
@@ -122,7 +122,7 @@ class Command < ActiveRecord::Base
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a quote with you:\n\n #{quote}"
 				send_message params[:phone_number], "You have shared this quote with @#{username}:\n\n #{quote}"
 			else
-				send_message params[:phone_number], "You tried to share a quote with #{username} which doesn't exist."
+				send_message params[:phone_number], "You tried to share a quote with @#{username} which doesn't exist."
 			end
 		else
 			send_message params[:phone_number], quote
