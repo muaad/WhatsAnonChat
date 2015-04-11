@@ -102,11 +102,11 @@ class Command < ActiveRecord::Base
 		joke = (twitter.tweets("best_jokes") + twitter.tweets("badjokecat")).sample.text
 		username = command_params params[:message]
 		if username
-			if Contact.find_by(username: username)
+			if !Contact.find_by(username: username).nil?
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a joke with you:\n\n #{joke}"
 				send_message params[:phone_number], "You have shared this joke with @#{username}:\n\n #{joke}"
 			else
-				
+				send_message params[:phone_number], "You tried to share a joke with #{username} which doesn't exist."
 			end
 		else
 			send_message params[:phone_number], joke
@@ -118,11 +118,11 @@ class Command < ActiveRecord::Base
 		quote = (twitter.tweets("quotes4ursoul") + twitter.tweets("inspowerminds")).sample.text
 		username = command_params params[:message]
 		if username
-			if Contact.find_by(username: username)
+			if !Contact.find_by(username: username).nil?
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a quote with you:\n\n #{quote}"
 				send_message params[:phone_number], "You have shared this quote with @#{username}:\n\n #{quote}"
 			else
-				
+				send_message params[:phone_number], "You tried to share a quote with #{username} which doesn't exist."
 			end
 		else
 			send_message params[:phone_number], quote
