@@ -93,19 +93,19 @@ class Command < ActiveRecord::Base
 		end
 		twitter = TwitterApi.new
 		tweets = "Here are the 5 latest #{category} stories making headlines on the #{src}:\n\n"
-		twitter.tweets(source, 5).each{|t| tweets << "#{t.text}\n\n"}
+		twitter.tweets(source).take(5).each{|t| tweets << "#{t.text}\n\n"}
 		send_message params[:phone_number], tweets
 	end
 
 	def self.jokes params
 		twitter = TwitterApi.new
-		joke = (twitter.tweets("best_jokes", 20) + twitter.tweets("badjokecat", 20)).sample.text
+		joke = (twitter.tweets("best_jokes") + twitter.tweets("badjokecat")).sample.text
 		send_message params[:phone_number], joke
 	end
 
 	def self.quotes params
 		twitter = TwitterApi.new
-		quote = (twitter.tweets("quotes4ursoul", 20) + twitter.tweets("inspowerminds", 20)).sample.text
+		quote = (twitter.tweets("quotes4ursoul") + twitter.tweets("inspowerminds")).sample.text
 		send_message params[:phone_number], quote
 	end
 
