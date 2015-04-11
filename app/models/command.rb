@@ -3,7 +3,7 @@ class Command < ActiveRecord::Base
 	scope :enabled, -> { where(enabled: true) }
 	def self.help params
 		commands = "This is a list of the available commands:\n\n"
-		Command.all.each{|c| commands << "/#{c.name}\t-\t#{c.description}\n\n"}
+		Command.enabled.each{|c| commands << "/#{c.name}\t-\t#{c.description}\n\n"}
 		commands << "\nIf you want to start chatting with someone, add '@' before their username e.g. \n@muaad: Hi. How are you?."
 		send_message params[:phone_number], commands
 	end

@@ -128,7 +128,7 @@ class CommandsController < ApplicationController
 
   def command message
   	if is_command message
-  		return Command.find_by(name: message.split("/")[1].downcase.strip)
+  		return Command.enabled.find_by(name: message.split("/")[1].downcase.strip)
   	end
   end
 
