@@ -46,9 +46,9 @@ class CommandsController < ApplicationController
   						chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
   						Message.create! chat: chat, body: message.split(":")[1]
   					else
-  						chat = chats.first
   						sender.chats.update_all(active: false)
   						recipient.chats.update_all(active: false)
+  						chat = chats.first
   						chat.active = true
   						chat.save!
   						Message.create! chat: chat, body: message.split(":")[1]
