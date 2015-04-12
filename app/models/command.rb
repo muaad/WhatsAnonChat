@@ -8,16 +8,7 @@ class Command < ActiveRecord::Base
 		# send_message params[:phone_number], commands
 		contact = Contact.find_by(phone_number: params[:phone_number])
 		msg = "Hi @#{contact.username},\n"
-		msg << "Find a random person to chat with by sending /spin. You can then start a conversation
-						with your random friend like this:\n\n@username: hi. \n\nOnce you have started the chat, you don't have to include the username again.
-						Just send the message the way you normally do. But, if you want to chat with someone else, you will have to start with the username
-						or your message will go to the wrong person. If you want to be very careful, you can always add the username to your message but most of the times, that is not neccessary.\n\n
-						You can also find some content on here to keep you informed and entertained. To get a random joke, send /jokes, for quotes, /quotes
-						and for news, you have a few options. /news gives you local news while the rest are self explanatory: /news/international, /news/tech,
-						/news/sport.\n\nWhen you request for content, if you had not saved this number in your contacts, the links won't appear and you won't be
-						able to click them. So, please make sure you save this number.\n\nYou can also share a joke or a quote with a friend. Just send /jokes/@username
-						or /quotes/@username. Spread the love. :-)\n\nAnd, finally, you can invite your friends by sending /invite/254722111777. Phone number must be in that format.
-						You can invite more than one friend like this: /invite/254722111777,254722888333,254711888222.\n\nEnjoy #{contact.male ? 'brother' : 'sister'}. :-)"
+		msg << "Find a random person to chat with by sending /spin. You can then start a conversation	with your random friend like this:\n\n@username: hi. \n\nOnce you have started the chat, you don't have to include the username again. Just send the message the way you normally do. But, if you want to chat with someone else, you will have to start with the username or your message will go to the wrong person. If you want to be very careful, you can always add the username to your message but most of the times, that is not neccessary.\n\n You can also find some content on here to keep you informed and entertained. To get a random joke, send /jokes, for quotes, /quotes and for news, you have a few options. /news gives you local news while the rest are self explanatory: /news/international, /news/tech, /news/sport.\n\nWhen you request for content, if you had not saved this number in your contacts, the links won't appear and you won't be able to click them. So, please make sure you save this number.\n\nYou can also share a joke or a quote with a friend. Just send /jokes/@username or /quotes/@username. Spread the love. :-)\n\nAnd, finally, you can invite your friends by sending /invite/254722111777. Phone number must be in that format. You can invite more than one friend like this: /invite/254722111777,254722888333,254711888222.\n\nEnjoy #{contact.male ? 'brother' : 'sister'}. :-)"
 		send_message params[:phone_number], msg
 	end
 
