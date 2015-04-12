@@ -21,8 +21,8 @@ class CommandsController < ApplicationController
 	  		end
 	  	elsif is_command message
 	  		if command(message).nil?
-	  			msg = "Sorry. We couldn't recognize that command. Here is a list of the commands we support:\n\n"
-	  			Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n\n"}
+	  			msg = "Sorry. We couldn't recognize that command. Send /help if in doubt."
+	  			# Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n\n"}
 	  			send_message(params[:phone_number], msg)
 	  		else
 	  			eval("Command.#{command(message).action_path}(params)")
