@@ -49,6 +49,7 @@ class Command < ActiveRecord::Base
 		msg = "Here is a list of people you have chat with:\n\n"
 		sender = Contact.find_by(phone_number: params[:phone_number])
 		# chats = Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id)
+		active = ""
 		sender.chats.each do |chat|
 			recipient = nil
 			if chat.contact == sender
@@ -56,7 +57,15 @@ class Command < ActiveRecord::Base
 			else
 				recipient = chat.contact
 			end
+			if sender.active_chats.first == chat
+				active = recipient.username
+			end
 			msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
+		end
+		if !active.empty?
+			msg << "You are currently chatting with:\n\n@#{active}\n\nIf you want to talk to someone else, you must start the message with @username: or the message will go to @#{active}."
+		else
+			msg << "You are currently not chatting with anyone. If you would like to chat with someone, you can send /spin and start your chat in this format: @username: hi."
 		end
 		send_message params[:phone_number], msg
 	end
