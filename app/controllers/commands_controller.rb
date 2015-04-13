@@ -43,30 +43,34 @@ class CommandsController < ApplicationController
           end
 	  			recipient = Contact.where("username ilike ?", username).first
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
-	  			if !recipient.nil?
-  					chats = Chat.where("contact_id = ? AND friend_id = ? OR contact_id = ? AND friend_id = ?", 
-  						sender.id, recipient.id, recipient.id, sender.id)
-  					if chats.empty?
-  						sender.chats.update_all(active: false)
-  						recipient.chats.update_all(active: false)
-  						chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
-  						Message.create! chat: chat, body: message.split(":")[1]
-  					else
-  						sender.chats.update_all(active: false)
-  						recipient.chats.update_all(active: false)
-  						chat = chats.first
-  						chat.active = true
-  						chat.save!
-  						Message.create! chat: chat, body: message.split(":")[1]
-  					end
-  					send_message recipient.phone_number, "@#{sender.username} says:\n\n#{msg}"
-  					# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
-  					# Message.create! chat: chat, body: message.split(":")[1]
-  				# elsif !recipient.opted_in
-  				# 	send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
-  				else
-  					send_message params[:phone_number], "There is no user with the username @#{username}."
-  				end
+          if recipient != sender
+            if !recipient.nil?
+              chats = Chat.where("contact_id = ? AND friend_id = ? OR contact_id = ? AND friend_id = ?", 
+                sender.id, recipient.id, recipient.id, sender.id)
+              if chats.empty?
+                sender.chats.update_all(active: false)
+                recipient.chats.update_all(active: false)
+                chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
+                Message.create! chat: chat, body: message.split(":")[1]
+              else
+                sender.chats.update_all(active: false)
+                recipient.chats.update_all(active: false)
+                chat = chats.first
+                chat.active = true
+                chat.save!
+                Message.create! chat: chat, body: message.split(":")[1]
+              end
+              send_message recipient.phone_number, "@#{sender.username} says:\n\n#{msg}"
+              # chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
+              # Message.create! chat: chat, body: message.split(":")[1]
+            # elsif !recipient.opted_in
+            #   send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+            else
+              send_message params[:phone_number], "There is no user with the username @#{username}."
+            end
+          else
+            send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with."
+          end
 	  		else
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
 	  			# chats = Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, sender.id, sender.id)
