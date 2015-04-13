@@ -34,7 +34,7 @@ class CommandsController < ApplicationController
 	  		send_message params[:phone_number], "All your details have been removed from the service. We shall miss you. If you miss us, send 'JOIN' again. You are welcome back anytime."
 	  	else
 	  		if message.start_with?("@")
-	  			username = message.split(":")[0].gsub("@", "")
+          username = message.split(":")[0].gsub("@", "")
 	  			recipient = Contact.where("username ilike ?", username).first
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
 	  			if !recipient.nil?
@@ -56,8 +56,8 @@ class CommandsController < ApplicationController
   					send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message.split(":")[1]}"
   					# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
   					# Message.create! chat: chat, body: message.split(":")[1]
-  				elsif !recipient.opted_in
-  					send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+  				# elsif !recipient.opted_in
+  				# 	send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
   				else
   					send_message params[:phone_number], "There is no user with the username @#{username}."
   				end
