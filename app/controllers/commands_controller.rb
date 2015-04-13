@@ -39,7 +39,7 @@ class CommandsController < ApplicationController
             msg = message.split(":")[1]
           else
             username = message.split(" ")[0].gsub("@", "")
-            msg = message.split(" ")[1..message.length]
+            msg = message.split(" ")[1..message.length].join(" ")
           end
 	  			recipient = Contact.where("username ilike ?", username).first
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
