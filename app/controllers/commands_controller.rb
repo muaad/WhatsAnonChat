@@ -34,7 +34,13 @@ class CommandsController < ApplicationController
 	  		send_message params[:phone_number], "All your details have been removed from the service. We shall miss you. If you miss us, send 'JOIN' again. You are welcome back anytime."
 	  	else
 	  		if message.start_with?("@")
-          username = message.split(":")[0].gsub("@", "")
+          if message.include?(":") && message.split(":")[0].split(" ").length <= 2
+            username = message.split(":")[0].gsub("@", "").strip
+            msg = message.split(":")[1]
+          else
+            username = message.split(" ")[0].gsub("@", "")
+            msg = message.split(" ")[1..message.length]
+          end
 	  			recipient = Contact.where("username ilike ?", username).first
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
 	  			if !recipient.nil?
@@ -53,7 +59,7 @@ class CommandsController < ApplicationController
   						chat.save!
   						Message.create! chat: chat, body: message.split(":")[1]
   					end
-  					send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message.split(":")[1]}"
+  					send_message recipient.phone_number, "@#{sender.username} says:\n\n#{msg}"
   					# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
   					# Message.create! chat: chat, body: message.split(":")[1]
   				# elsif !recipient.opted_in
