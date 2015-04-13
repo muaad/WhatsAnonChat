@@ -69,7 +69,7 @@ class CommandsController < ApplicationController
               send_message params[:phone_number], "There is no user with the username @#{username}."
             end
           else
-            send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with."
+            send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with. Send /help if you are not sure. Want some smart guy to talk to straight away, say hi to @smartie; for example, send @smartie hi."
           end
 	  		else
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
