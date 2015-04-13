@@ -34,6 +34,6 @@ class Contact < ActiveRecord::Base
   end
 
   def active_chats
-    Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, id, id)
+    Chat.active.where("contact_id = ? OR friend_id = ?", id, id)
   end
 end
