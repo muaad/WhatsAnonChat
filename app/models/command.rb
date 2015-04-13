@@ -23,6 +23,7 @@ class Command < ActiveRecord::Base
 
 	def self.invite params
 		command_params(params[:text]).split(",").each do |phone_number|
+			phone_number = phone_number.strip
 			contact = Contact.find_by(phone_number: phone_number)
 			if contact.nil?
 				create_ongair_contact phone_number
