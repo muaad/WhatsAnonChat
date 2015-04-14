@@ -119,10 +119,9 @@ class Command < ActiveRecord::Base
 			else
 				send_message params[:phone_number], "You tried to share a joke with @#{username} which doesn't exist."
 			end
-		elsif params[:text] == "/jokes"
-			send_message params[:phone_number], joke
-		else
 		end
+		if params[:text] == "/jokes"
+			send_message params[:phone_number], joke
 	end
 
 	def self.quotes params
