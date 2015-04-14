@@ -66,10 +66,10 @@ class CommandsController < ApplicationController
             # elsif !recipient.opted_in
             #   send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
             else
-              send_message params[:phone_number], "There is no user with the username @#{username}."
+              send_message params[:phone_number], "There is no user with the username @#{username}. Send /spin to get someone to talk to or /friends to get a list of the people you have chat with."
             end
           else
-            send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with. Send /help if you are not sure. Want some smart guy to talk to straight away, say hi to @smartie; for example, send @smartie hi."
+            send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with or /friends to get a list of the people you have chat with. Send /help if you are not sure. Want some smart guy to talk to straight away, say hi to @smartie; for example, send @smartie hi."
           end
 	  		else
 	  			sender = Contact.find_by(phone_number: params[:phone_number])
