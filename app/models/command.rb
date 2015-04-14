@@ -112,8 +112,6 @@ class Command < ActiveRecord::Base
 		twitter = TwitterApi.new
 		joke = (twitter.tweets("best_jokes") + twitter.tweets("badjokecat")).sample.text
 		username = command_params(params[:text]).sub("@", "").strip
-		logger.info "Joke >>>>>>> #{joke}"
-		logger.info "Username >>>>>>> #{username}"
 		if !command_params(params[:text]).blank?
 			if !Contact.find_by(username: username).nil?
 				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a joke with you:\n\n #{joke}"
@@ -122,8 +120,8 @@ class Command < ActiveRecord::Base
 				send_message params[:phone_number], "You tried to share a joke with @#{username} which doesn't exist."
 			end
 		else
-			resp = send_message params[:phone_number], joke
-			logger.info "Response >>>>>> #{resp}"
+			send_message params[:phone_number], joke
+			send_message params[:phone_number], "jokes? haha."
 		end
 	end
 
