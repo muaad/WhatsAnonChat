@@ -55,8 +55,12 @@ class Command < ActiveRecord::Base
 		elsif command_params(params[:text]).downcase == "female"
 			contacts = Contact.female
 		end
-		msg << "We have found #{contacts.count} matches:\n\n"
-		contacts.each{|c| msg << "@#{c.username.downcase} - #{c.age}\n\n"}
+		if !contacts.empty?
+			msg << "We have found #{contacts.count} matches:\n\n"
+			contacts.each{|c| msg << "@#{c.username.downcase} - #{c.age}\n\n"}
+		else
+			msg = "Sorry. We could not find anuthing that matches your search parameters."
+		end
 		send_message params[:phone_number], msg
 	end
 
