@@ -173,6 +173,32 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], msg
 	end
 
+	def profile params
+		msg = ""
+		if command_params params[:text]
+			field = command_params(params[:text]).split(":")[0].strip
+			value = command_params(params[:text]).split(":")[1].strip
+			if ["username", "age", "gender"].include?(field.downcase)
+				if field.downcase == "username"
+					if !Contact.username_exists?(field)
+						Contact.find_by(phone_number: params[:phone_number]).update(username: value)
+						msg = "Profile update successful. Your new username is: #{value}."
+					else
+						msg = "The username you have chosen (#{value}) already exists. Please choose another."
+					end
+				else
+					Contact.find_by(phone_number: params[:phone_number]).update("#{field}" => value)
+					msg = "Profile update successful. Your new #{field} is: #{value}."
+				end
+			else
+				msg = "You can only update username, age or gender. Try again."
+			end
+		else
+			msg = "Send /profile/username:your_new_username to update your username or /profile/gender:your_new_gender to update your gender (Male or Female) or /profile/age:your_new_age to update your age."
+		end
+		send_message params[:phone_number], msg
+	end
+
 	def self.search_query text
 		query = ""
 		q_age = ""

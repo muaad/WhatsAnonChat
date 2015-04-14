@@ -38,4 +38,8 @@ class Contact < ActiveRecord::Base
   def active_chats
     Chat.active.where("contact_id = ? OR friend_id = ?", id, id)
   end
+
+  def self.username_exists? username
+    !Contact.find_by(username: username).nil?
+  end
 end
