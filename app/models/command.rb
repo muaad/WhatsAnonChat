@@ -119,9 +119,9 @@ class Command < ActiveRecord::Base
 			else
 				send_message params[:phone_number], "You tried to share a joke with @#{username} which doesn't exist."
 			end
-		else
+		elsif params[:text] == "/jokes"
 			send_message params[:phone_number], joke
-			send_message params[:phone_number], "jokes? haha."
+		else
 		end
 	end
 
