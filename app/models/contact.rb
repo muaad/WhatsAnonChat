@@ -5,6 +5,8 @@ class Contact < ActiveRecord::Base
   has_many :friends, :through => :chats
 
   scope :opted_in, -> { where(opted_in: true) }
+  scope :male, -> { where("gender ilike 'male'") }
+  scope :female, -> { where("gender ilike 'female'") }
 
   def complete_profile step, value
   	begin

@@ -30,23 +30,32 @@ class Command < ActiveRecord::Base
 
 	def self.search params
 		# age:22-25,gender:Male,country:Kenya
-		query = search_query command_params params[:text]
-		puts query
+		# query = search_query command_params params[:text]
+		# puts query
+		# contacts = []
+		# begin
+		# 	contacts = Contact.where(query)
+		# rescue Exception => e
+		# 	# puts "><><><><><>< Error"
+		# 	# contacts = []
+		# 	# msg = "We couldn't understand your search query."
+		# end
+		# msg = ""
+		# if contacts.empty?
+		# 	msg = "Sorry. We could not find anyone matching your search query. Try again."
+		# else
+		# 	msg = "We have found #{contacts.count} results:\n\n"
+		# 	contacts.each{|c| msg << "@#{c.username.downcase}\n#{c.age}\t|\t#{c.gender}\t|\t#{c.country}\n"}
+		# end
+		# send_message params[:phone_number], msg
 		contacts = []
-		begin
-			contacts = Contact.where(query)
-		rescue Exception => e
-			# puts "><><><><><>< Error"
-			# contacts = []
-			# msg = "We couldn't understand your search query."
-		end
 		msg = ""
-		if contacts.empty?
-			msg = "Sorry. We could not find anyone matching your search query. Try again."
-		else
-			msg = "We have found #{contacts.count} results:\n\n"
-			contacts.each{|c| msg << "@#{c.username.downcase}\n#{c.age}\t|\t#{c.gender}\t|\t#{c.country}\n"}
+		if command_params(params[:text]).downcase == "male"
+			contacts = Contact.male
+		elsif command_params(params[:text]).downcase == "female"
+			contacts = Contact.female
 		end
+		contacts.each{|c| msg << "@#{c.username.downcase} - #{c.age}\n"}
 		send_message params[:phone_number], msg
 	end
 
