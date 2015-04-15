@@ -24,6 +24,8 @@ gem 'countries'
 gem 'rails_admin'
 gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
 gem 'twitter'
+gem 'vacuum'
+gem 'amazon-ecs'
 # gem 'mysql2'
 group :development do
   gem 'better_errors'
