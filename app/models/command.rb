@@ -90,6 +90,7 @@ class Command < ActiveRecord::Base
 		else
 			msg << "You are currently not chatting with anyone. If you would like to chat with someone, you can send /spin and start your chat in this format: @username: hi."
 		end
+		msg << "\n\nJust a reminder: Your profile is set to invisible and you won't be able to chat with anyone. If you want to be able to chat with people, make yourself visible by sending in /visible/on"
 		send_message params[:phone_number], msg
 	end
 
