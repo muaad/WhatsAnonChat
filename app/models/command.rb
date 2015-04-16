@@ -51,9 +51,9 @@ class Command < ActiveRecord::Base
 		contacts = []
 		msg = ""
 		if command_params(params[:text]).downcase == "male"
-			contacts = Contact.male
+			contacts = Contact.male.where.not(phone_number: params[:phone_number])
 		elsif command_params(params[:text]).downcase == "female"
-			contacts = Contact.female
+			contacts = Contact.female.where.not(phone_number: params[:phone_number])
 		end
 		if !contacts.empty?
 			msg << "We have found #{contacts.count} matches:\n\n"
