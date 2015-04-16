@@ -90,7 +90,9 @@ class Command < ActiveRecord::Base
 		else
 			msg << "You are currently not chatting with anyone. If you would like to chat with someone, you can send /spin and start your chat in this format: @username: hi."
 		end
-		msg << "\n\nJust a reminder: Your profile is set to invisible and you won't be able to chat with anyone. If you want to be able to chat with people, make yourself visible by sending in /visible/on"
+		if !sender.opted_in
+			msg << "\n\nJust a reminder: Your profile is set to invisible and you won't be able to chat with anyone. If you want to be able to chat with people, make yourself visible by sending in /visible/on"
+		end
 		send_message params[:phone_number], msg
 	end
 
@@ -146,125 +148,4 @@ class Command < ActiveRecord::Base
 		end
 	end
 
-	def self.quotes params
-		twitter = TwitterApi.new
-		quote = (twitter.tweets("quotes4ursoul") + twitter.tweets("inspowerminds")).sample.text
-		if !command_params(params[:text]).blank?
-			username = command_params(params[:text]).sub("@", "").strip
-			if !Contact.find_by(username: username).nil?
-				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a quote with you:\n\n #{quote}"
-				send_message params[:phone_number], "You have shared this quote with @#{username}:\n\n #{quote}"
-			else
-				send_message params[:phone_number], "You tried to share a quote with @#{username} which doesn't exist."
-			end
-		else
-			send_message params[:phone_number], quote
-		end
-	end
-
-	def self.games params
-		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
-	end
-
-	def self.visible params
-		text = command_params(params[:text]).downcase if !command_params(params[:text]).blank?
-		msg = ""
-		if text == "yes" || text == "on"
-			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: true)
-			msg = "Your account is now visible."
-		elsif text == "no" || text == "off"
-			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: false)
-			msg = "Your account is now invisible."
-		else
-			msg = "Please send in /visible/yes or visible/no. Thanks."
-		end
-		send_message params[:phone_number], msg
-	end
-
-	def self.profile params
-		msg = ""
-		contact = Contact.find_by(phone_number: params[:phone_number])
-		if command_params(params[:text]) && command_params(params[:text]).include?(":")
-			field = command_params(params[:text]).split(":")[0].downcase.strip
-			value = command_params(params[:text]).split(":")[1].downcase.strip
-			if ["username", "age", "gender"].include?(field.downcase)
-				if field.downcase == "username"
-					if !Contact.username_exists?(value)
-						contact.update(username: value)
-						msg = "Profile update successful. Your new username is: #{value}."
-					else
-						if value == contact.username.downcase
-							msg = "You have provided your current username (@#{value}). If you want to change it, provide a different value."
-						else
-							msg = "The username you have chosen (@#{value}) already exists. Please choose another."
-						end
-					end
-				else
-					contact.update("#{field}" => value)
-					msg = "Profile update successful. Your new #{field} is: #{value}."
-				end
-			else
-				msg = "You can only update username, age or gender. Try again."
-			end
-		else
-			msg = "Send /profile/username:your_new_username to update your username or /profile/gender:your_new_gender to update your gender (Male or Female) or /profile/age:your_new_age to update your age."
-		end
-		send_message params[:phone_number], msg
-	end
-
-	def self.search_query text
-		query = ""
-		q_age = ""
-		q_others = ""
-		if text.include?(":")
-			text.split(",").each do |q|
-				if q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 2
-					from = q.split(":")[1].split("-")[0]
-					to = q.split(":")[1].split("-")[1]
-					# q_age = "age >= #{q.split(":")[1].split("-")[0]} AND age <= #{q.split(":")[1].split("-")[1]}" 
-					q_age = "age between #{from} AND #{to}" 
-				elsif q.split(":")[0].downcase == "age" && q.split(":")[1].split("-").count == 1
-					q_age = "age = #{q.split(":")[1]}"
-				# elsif q.split(":")[0].downcase == "age"
-					
-				end
-				if q.split(":")[0].downcase != "age"
-					q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
-				# else
-				# 	query << " #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
-				end
-			end
-			if q_age.empty?
-				query = q_others.sub!(" AND ", "")
-			else
-				query = q_age + q_others
-			end
-		else
-			# a,s,l
-			age = text.split(",")[0]
-			gender = text.split(",")[1]
-			location = text.split(",")[2]
-			if age.include?("-")
-				from = age.split("-")[0]
-				to = age.split("-")[1]
-				q_age = "age between #{from} AND #{to}"
-			else
-				q_age = "age = #{age}"
-			end
-			query = "#{q_age} AND gender ilike '#{gender}' AND country ilike '#{location}'"
-		end
-		query
-	end
-
-	def self.command_params message
-		message.split("/")[2]
-	end
-
-	def self.send_message phone_number, message
-		HTTParty.post("http://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
-	end
-
-	def self.create_ongair_contact phone_number
-		HTTParty.post("http://app.ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
-	end
-end
+	de
