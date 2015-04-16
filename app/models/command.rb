@@ -83,7 +83,10 @@ class Command < ActiveRecord::Base
 			msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
 		end
 		if !active.empty?
-			msg << "You are currently chatting with:\n\n@#{active}\n\nIf you want to talk to someone else, you must start the message with @username: or the message will go to @#{active}."
+			msg << "Your currently active chat is with:\n\n@#{active}\n\nIf you want to talk to someone else, you must start the message with @username: or the message will go to @#{active}."
+			if !Contact.find_by(username: active).opted_in
+				msg << "\n\n@#{active} has set their profile to be invisible which means they are not available for chat. Please find someone else to chat with meanwhile."
+			end
 		else
 			msg << "You are currently not chatting with anyone. If you would like to chat with someone, you can send /spin and start your chat in this format: @username: hi."
 		end
