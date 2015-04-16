@@ -75,26 +75,30 @@ class CommandsController < ApplicationController
 				else
 					sender = Contact.find_by(phone_number: params[:phone_number])
 					# chats = Chat.where("active = ? AND contact_id = ? OR friend_id = ?", true, sender.id, sender.id)
-					chats = sender.active_chats
-					if !chats.empty?
-						recipient = nil
-						chat = chats.first
-						if chat.contact == sender
-							recipient = chat.friend
-						else
-							recipient = chat.contact
-						end
-						if !recipient.opted_in
-							send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
-						else
-							send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
-						end
-						Message.create! chat: chat, body: message
+					if !sender.opted_in
+						send_message sender.phone_number, "Hey @#{sender.username}, Remember you are invisible? If you want to be able to chat with people, make yourself visible by sending in /visible/on"
 					else
-						send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
-						start your message with '@username:' and replace 'username' with the username of a friend. 
-						To get a list of the people you have been chatting with, reply with '/friends'. 
-						To get some help using this service, reply with '/help'."
+						chats = sender.active_chats
+						if !chats.empty?
+							recipient = nil
+							chat = chats.first
+							if chat.contact == sender
+								recipient = chat.friend
+							else
+								recipient = chat.contact
+							end
+							if !recipient.opted_in
+								send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+							else
+								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
+							end
+							Message.create! chat: chat, body: message
+						else
+							send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
+							start your message with '@username:' and replace 'username' with the username of a friend. 
+							To get a list of the people you have been chatting with, reply with '/friends'. 
+							To get some help using this service, reply with '/help'."
+						end
 					end
 				end
 			end
