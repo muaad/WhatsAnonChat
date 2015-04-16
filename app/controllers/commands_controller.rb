@@ -16,9 +16,6 @@ class CommandsController < ApplicationController
 				end
 			elsif contact.profile_incomplete
 				update_profile message, params[:phone_number]
-				if !contact.profile_incomplete
-					contact.update(opted_in: true)
-				end
 			elsif is_command message
 				if command(message).nil?
 					msg = "Sorry. We couldn't recognize that command. Send /help if in doubt."
@@ -121,6 +118,9 @@ class CommandsController < ApplicationController
 	
 		if current.step
 			contact.complete_profile(current.step, message)
+			if !contact.profile_incomplete
+				contact.update(opted_in: true)
+			end
 			current.update(step_id: current.step.next_step_id)
 			send_message phone_number, current.step.prompt
 		end
