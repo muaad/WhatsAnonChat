@@ -40,6 +40,6 @@ class Contact < ActiveRecord::Base
   end
 
   def self.username_exists? username
-    !Contact.find_by(username: username).nil?
+    !Contact.where("username like '#{username}'").empty?
   end
 end

@@ -173,21 +173,26 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], msg
 	end
 
-	def profile params
+	def self.profile params
 		msg = ""
-		if command_params params[:text]
-			field = command_params(params[:text]).split(":")[0].strip
-			value = command_params(params[:text]).split(":")[1].strip
+		contact = Contact.find_by(phone_number: params[:phone_number])
+		if command_params(params[:text]) && command_params(params[:text]).include?(":")
+			field = command_params(params[:text]).split(":")[0].downcase.strip
+			value = command_params(params[:text]).split(":")[1].downcase.strip
 			if ["username", "age", "gender"].include?(field.downcase)
 				if field.downcase == "username"
-					if !Contact.username_exists?(field)
-						Contact.find_by(phone_number: params[:phone_number]).update(username: value)
+					if !Contact.username_exists?(value)
+						contact.update(username: value)
 						msg = "Profile update successful. Your new username is: #{value}."
 					else
-						msg = "The username you have chosen (#{value}) already exists. Please choose another."
+						if value == contact.username.downcase
+							msg = "You have provided your current username (@#{value}). If you want to change it, provide a different value."
+						else
+							msg = "The username you have chosen (@#{value}) already exists. Please choose another."
+						end
 					end
 				else
-					Contact.find_by(phone_number: params[:phone_number]).update("#{field}" => value)
+					contact.update("#{field}" => value)
 					msg = "Profile update successful. Your new #{field} is: #{value}."
 				end
 			else
