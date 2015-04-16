@@ -158,8 +158,8 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
 	end
 
-	def visible params
-		text = command_params(params[:text]).downcase
+	def self.visible params
+		text = command_params(params[:text]).downcase if !command_params(params[:text]).blank?
 		msg = ""
 		if text == "yes" || text == "on"
 			Contact.find_by(phone_number: params[:phone_number]).update(opted_in: true)
