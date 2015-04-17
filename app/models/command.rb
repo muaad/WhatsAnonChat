@@ -41,10 +41,7 @@ class Command < ActiveRecord::Base
 			contact = Contact.find_by(phone_number: phone_number)
 			if contact.nil?
 				create_ongair_contact phone_number
-				send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number]).username.downcase} to try out this service which lets you
-				chat on WhatsApp annonymously. Find interesting people outside your contacts and chat with them without revealing your number.
-				 You can try it out by adding this number to your contacts and replying to this message with the word 'JOIN'. Don't worry. 
-				 You can opt out any time and no one will bother you anymore. Just send the word 'LEAVE' if you want to remove yourself."
+				send_message phone_number.strip, "Hey there. You have been invited by @#{Contact.find_by(phone_number: params[:phone_number]).username.downcase} to try out this service which lets you chat on WhatsApp annonymously. Find interesting people outside your contacts and chat with them without revealing your number. You can also get NEWS, JOKES and QUOTES to keep you informed and entertained. You can try it out by adding this number to your contacts and replying to this message with the word 'JOIN'."# Don't worry.  You can opt out any time and no one will bother you anymore. Just send the word 'LEAVE' if you want to remove yourself."
 			else
 				send_message params[:phone_number], "#{phone_number} is already registered. You can chat with #{contact.male ? 'him' : 'her'} at @#{contact.username.downcase}."
 			end
