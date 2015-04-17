@@ -15,6 +15,7 @@ class Command < ActiveRecord::Base
 		friends_msg = "You can get a list of the people you have chat with by sending /friends. This will also tell you the person you currently have an active chat with. This is the person to whom any message you send that doesn't start with @username goes to. This will help you in case you are not sure who you are talking to."
 		content_msg = "You can find some content on here to keep you informed and entertained. To get a random joke, send /jokes, for quotes, /quotes and for news, you have a few options. /news gives you local news while the rest are self explanatory: /news/international, /news/tech, /news/sport.\n\nWhen you request for content, if you had not saved this number in your contacts, the links won't appear and you won't be able to click them. So, please make sure you save this number.\n\nYou can also share a joke or a quote with a friend. Just send /jokes/@username or /quotes/@username. Spread the love. :-)"
 		invite_msg = "You can invite your friends by sending /invite/254722111777. Phone number must be in that format. You can invite more than one friend like this: /invite/254722111777,254722888333,254711888222."
+		visible_msg = "Say you don't want to chat with anyone on this platform and you are here only for the wonderful content we provide i.e. the news, jokes, quotes and so on, you can make yourself invisible by sending in /visible/no. Once you are invisible, you won't appear when someone runs /spin or in search results. No one will be able to chat with you nor will you be able to chat with anyone. On the other hand, you will be able to get NEWS, JOKES, QUOTES and any other content we may provide. You can make yourself visible again by sending in /visible/yes. Now, you will be able to take advantage of all the awesome features we offer."
 
 		cmd = command_params(params[:text])
 		if cmd
@@ -27,10 +28,13 @@ class Command < ActiveRecord::Base
 			elsif cmd.downcase == "invite"
 				msg = invite_msg
 			else
-				msg = "Send either /help/chat, /help/friends, /help/content or /help/invite."
+			elsif cmd.downcase == "visible"
+				msg = visible_msg
+			else
+				msg = "Send either /help/chat, /help/friends, /help/content, /help/visible or /help/invite."
 			end
 		else
-			msg << "Here are the commands you can use:\n\n/spin - Find a random person to chat with. For more help on how to chat, send /help/chat\n\n/friends - Gives you a list of the people you have chat with and also tells you the person you currently have an active chat with. To find out more, send /help/friends\n\n/profile - Lets you update your profile details. Send /profile to find out how to use it.\n\n/search - Lets you search through the users. For now you can only search by gender. Send in exactly /search/male or /search/female.\n\n/news - Get the latest news.\n\n /jokes - Get a random joke.\n\n/quotes - Get a random quote.\n\nYou can also share jokes and quotes with a friend. To get more on how to get content like news, jokes and quotes, send /help/content\n\n/invite - Lets you invite people to this service. Format is like this: /invite/254722111777. For more, send /help/invite.\n\nEnjoy #{contact.male ? 'brother' : 'sister'}. :-)"
+			msg << "Here are the commands you can use:\n\n/spin - Find a random person to chat with. For more help on how to chat, send /help/chat\n\n/friends - Gives you a list of the people you have chat with and also tells you the person you currently have an active chat with. To find out more, send /help/friends\n\n/profile - Lets you update your profile details. Send /profile to find out how to use it.\n\n/visible - Lets you the visibility of your profile. Send /visible/yes or /visible/no. For more, send /help/visible.\n\n/search - Lets you search through the users. For now you can only search by gender. Send in exactly /search/male or /search/female.\n\n/news - Get the latest news.\n\n /jokes - Get a random joke.\n\n/quotes - Get a random quote.\n\nYou can also share jokes and quotes with a friend. To get more on how to get content like news, jokes and quotes, send /help/content\n\n/invite - Lets you invite people to this service. Format is like this: /invite/254722111777. For more, send /help/invite.\n\nEnjoy #{contact.male ? 'brother' : 'sister'}. :-)"
 		end
 		send_message params[:phone_number], msg
 	end
