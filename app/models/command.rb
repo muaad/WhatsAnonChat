@@ -27,7 +27,6 @@ class Command < ActiveRecord::Base
 				msg = content_msg
 			elsif cmd.downcase == "invite"
 				msg = invite_msg
-			else
 			elsif cmd.downcase == "visible"
 				msg = visible_msg
 			else
