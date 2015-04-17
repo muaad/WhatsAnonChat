@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409210559) do
+ActiveRecord::Schema.define(version: 20150417210139) do
 
   create_table "chats", force: :cascade do |t|
     t.integer  "contact_id"
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(version: 20150409210559) do
     t.text     "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "from"
+    t.integer  "to"
   end
 
   add_index "messages", ["chat_id"], name: "index_messages_on_chat_id"
