@@ -144,8 +144,8 @@ class Command < ActiveRecord::Base
 				src = "BBC"
 				category = "sports"
 			elsif command_params(params[:text]) == "international"
-				source = "bbcnews"
-				src = "BBC"
+				source = "AJEnglish"
+				src = "Al Jazeera"
 				category = "international news"
 			end
 		end
