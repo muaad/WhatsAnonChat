@@ -39,6 +39,7 @@ class Command < ActiveRecord::Base
 	end
 
 	def self.invite params
+		# Create record for the inivited person and associated it with the person who had invited them. Build a points based reward system.
 		command_params(params[:text]).split(",").each do |phone_number|
 			phone_number = phone_number.strip
 			contact = Contact.find_by(phone_number: phone_number)
