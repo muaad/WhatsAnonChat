@@ -51,18 +51,18 @@ class CommandsController < ApplicationController
 									sender.chats.update_all(active: false)
 									recipient.chats.update_all(active: false)
 									chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
-									Message.create! chat: chat, body: message.split(":")[1], from: sender.id, to: recipient.id
+									Message.create! chat: chat, body: message.split(":")[1]#, from: sender.id, to: recipient.id
 								else
 									sender.chats.update_all(active: false)
 									recipient.chats.update_all(active: false)
 									chat = chats.first
 									chat.active = true
 									chat.save!
-									Message.create! chat: chat, body: message.split(":")[1], from: sender.id, to: recipient.id
+									Message.create! chat: chat, body: message.split(":")[1]#, from: sender.id, to: recipient.id
 								end
 								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{msg}"
 								# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
-								# Message.create! chat: chat, body: message.split(":")[1], from: sender.id, to: recipient.id
+								# Message.create! chat: chat, body: message.split(":")[1]#, from: sender.id, to: recipient.id
 							elsif !recipient.opted_in
 								send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 							else
@@ -92,7 +92,7 @@ class CommandsController < ApplicationController
 							else
 								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
 							end
-							Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+							Message.create! chat: chat, body: message#, from: sender.id, to: recipient.id
 						else
 							send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
 							start your message with '@username:' and replace 'username' with the username of a friend. 
