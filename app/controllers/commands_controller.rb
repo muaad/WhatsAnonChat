@@ -64,7 +64,7 @@ class CommandsController < ApplicationController
 								# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
 								# Message.create! chat: chat, body: message.split(":")[1], from: sender.id, to: recipient.id
 							elsif !recipient.opted_in
-								send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+								send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 							else
 								send_message params[:phone_number], "There is no user with the username @#{username}. Send /spin to get someone to talk to or /friends to get a list of the people you have chat with."
 							end
@@ -88,7 +88,7 @@ class CommandsController < ApplicationController
 								recipient = chat.contact
 							end
 							if !recipient.opted_in
-								send_message params[:phone_number], "@#{username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+								send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 							else
 								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
 							end
