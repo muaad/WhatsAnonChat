@@ -19,11 +19,9 @@ class CommandsController < ApplicationController
 			elsif is_command message
 				if command(message).nil?
 					msg = "Sorry. We couldn't recognize that command. Send /help if in doubt."
-					# Command.all.each{|c| msg << "#{c.name}\t-\t#{c.description}\n\n"}
 					send_message(params[:phone_number], msg)
 				else
 					eval("Command.#{command(message).action_path}(params)")
-					# HTTParty.post("#{Rails.application.secrets.root_url}#{command(message).action_path}", body: params)
 				end
 			elsif message.downcase == "leave"
 				contact.chats.delete_all
