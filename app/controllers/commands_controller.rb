@@ -61,7 +61,7 @@ class CommandsController < ApplicationController
 								if !msg.blank?
 									send_message recipient.phone_number, "@#{sender.username} says:\n\n#{msg}"
 								else
-									send_message recipient.phone_number, "A chat has been initiated with @#{recipient.username} but you haven't included a message. Send your message now."
+									send_message sender.phone_number, "A chat has been initiated with @#{recipient.username} but you haven't included a message. Send your message now."
 								end
 								# chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
 								# Message.create! chat: chat, body: message.split(":")[1], from: sender.id, to: recipient.id
