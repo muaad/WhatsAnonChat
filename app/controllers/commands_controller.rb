@@ -117,19 +117,21 @@ class CommandsController < ApplicationController
 			current = Progress.create! contact: contact, step: Step.first
 		else
 			current = Progress.find_by(contact: contact)
-			# if current.step.nil?
-			# 	current.update(step: Step.first)
-			# end
 		end
 	
 		if current.step
-			contact.complete_profile(current.step, message)
-			if !contact.profile_incomplete
-				contact.update(opted_in: true)
-				send_message "254722778438", "New sign up: \n#{contact.username} | #{contact.age} | #{contact.gender} | #{contact.country} | #{contact.phone_number}"
+			error = Contact.check_format(current.step.name, message)
+			if error.nil?
+				contact.complete_profile(current.step, message)
+				if !contact.profile_incomplete
+					contact.update(opted_in: true)
+					send_message "254722778438", "New sign up: \n#{contact.username} | #{contact.age} | #{contact.gender} | #{contact.country} | #{contact.phone_number}"
+				end
+				current.update(step_id: current.step.next_step_id)
+				send_message phone_number, current.step.prompt
+			else
+				send_message phone_number, error
 			end
-			current.update(step_id: current.step.next_step_id)
-			send_message phone_number, current.step.prompt
 		end
 	end
 
