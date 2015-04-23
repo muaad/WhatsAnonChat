@@ -31,7 +31,7 @@ class CommandsController < ApplicationController
 				if message.start_with?("@")
 					if message.include?(":") && message.split(":")[0].split(" ").length <= 2
 						username = message.split(":")[0].gsub("@", "").strip
-						msg = message.split(":")[1]
+						msg = message.split(":")[1..message.length].join(" ")
 					else
 						username = message.split(" ")[0].gsub("@", "")
 						msg = message.split(" ")[1..message.length].join(" ")
