@@ -188,6 +188,22 @@ class Command < ActiveRecord::Base
 		end
 	end
 
+	def self.stats params
+		twitter = TwitterApi.new
+		stat = twitter.tweets("optajoe").sample.text
+		if !command_params(params[:text]).blank?
+			username = command_params(params[:text]).sub("@", "").strip
+			if !Contact.find_by(username: username).nil?
+				send_message Contact.find_by(username: username).phone_number, "@#{Contact.find_by(phone_number: params[:phone_number]).username} has shared a football stat with you:\n\n #{stat}"
+				send_message params[:phone_number], "You have shared this football stat with @#{username}:\n\n #{stat}"
+			else
+				send_message params[:phone_number], "You tried to share a stat with @#{username} which doesn't exist."
+			end
+		else
+			send_message params[:phone_number], stat
+		end
+	end
+
 	def self.games params
 		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
 	end
