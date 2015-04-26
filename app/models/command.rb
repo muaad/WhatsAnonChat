@@ -93,17 +93,14 @@ class Command < ActiveRecord::Base
 		# chats = Chat.where("contact_id = ? OR friend_id = ?", sender.id, sender.id)
 		active = ""
 		msg = ""
+		if !sender.chats.empty?
+			msg = "Here is a list of people you have chat with:\n\n"
+		end
 		sender.chats.each do |chat|
-			recipient = nil
-			if chat.contact == sender
-				recipient = chat.friend
-			else
-				recipient = chat.contact
-			end
+			recipient = sender.last_chat.recipient(sender)
 			if sender.active_chats.first == chat
 				active = recipient.username
 			end
-			msg = "Here is a list of people you have chat with:\n\n"
 			msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
 		end
 		if !active.empty?
