@@ -103,7 +103,7 @@ class CommandsController < ApplicationController
 										send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 									else
 										send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}\n\nYou don't have an active chat with @#{sender.username}. To reply to @#{sender.username}, start your message with @#{sender.username}."
-										Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+										Message.create! chat: sender.last_chat, body: message, from: sender.id, to: recipient.id
 										send_message params[:phone_number], "Your last active chat was with @#{recipient.username} who has since started another chat with someone else. Don't worry. We have delivered your message to @#{recipient.username}. You can start your message with @#{recipient.username} just to be safe."
 									end
 								else
