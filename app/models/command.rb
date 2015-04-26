@@ -97,7 +97,7 @@ class Command < ActiveRecord::Base
 			msg = "Here is a list of people you have chat with:\n\n"
 		end
 		sender.chats.each do |chat|
-			recipient = sender.last_chat.recipient(sender)
+			recipient = chat.recipient(sender)
 			if sender.active_chats.first == chat
 				active = recipient.username
 			end
