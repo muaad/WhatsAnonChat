@@ -98,10 +98,12 @@ class Command < ActiveRecord::Base
 		end
 		sender.chats.each do |chat|
 			recipient = chat.recipient(sender)
-			if sender.active_chats.first == chat
-				active = recipient.username
+			if !recipient.nil?
+				if sender.active_chats.first == chat
+					active = recipient.username
+				end
+				msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
 			end
-			msg << "- @#{recipient.username} - #{recipient.age} | #{recipient.gender} | #{recipient.country} \n\n"
 		end
 		if !active.empty?
 			msg << "Your currently active chat is with:\n\n@#{active}\n\nIf you want to talk to someone else, you must start the message with @username: or the message will go to @#{active}."
