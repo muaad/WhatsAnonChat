@@ -67,6 +67,10 @@ class Contact < ActiveRecord::Base
 		Chat.where("contact_id = ? OR friend_id = ?", id, id)
 	end
 
+	def last_chat
+		chats.order("updated_at desc").first
+	end
+
 	def active_chats
 		Chat.active.where("contact_id = ? OR friend_id = ?", id, id)
 	end

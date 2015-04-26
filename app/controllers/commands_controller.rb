@@ -93,13 +93,21 @@ class CommandsController < ApplicationController
 								send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 							else
 								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
+								Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
 							end
-							Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
 						else
-							send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
-							start your message with '@username:' and replace 'username' with the username of a friend. 
-							To get a list of the people you have been chatting with, reply with '/friends'. 
-							To get some help using this service, reply with '/help'."
+							recipient = last_chat.recipient(sender).username
+							if !recipient.opted_in
+								send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+							else
+								send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}\n\nYou don't have an active chat with @#{sender.username}. To reply to @#{sender.username}, start your message with @#{sender.username}."
+								Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+								send_message params[:phone_number], "Your last active chat was with @#{recipient} who has since started another chat with someone else. Don't worry. We have delivered your message to @#{recipient}. You can start your message with @#{recipient} just to be safe."
+							end
+							# send_message params[:phone_number], "Looks like you don't have an active chat. To start a chat, 
+							# start your message with '@username:' and replace 'username' with the username of a friend. 
+							# To get a list of the people you have been chatting with, reply with '/friends'. 
+							# To get some help using this service, reply with '/help'."
 						end
 					end
 				end
