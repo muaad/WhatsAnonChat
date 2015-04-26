@@ -96,7 +96,7 @@ class CommandsController < ApplicationController
 								Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
 							end
 						else
-							recipient = last_chat.recipient(sender).username
+							recipient = sender.last_chat.recipient(sender).username
 							if !recipient.opted_in
 								send_message params[:phone_number], "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
 							else
