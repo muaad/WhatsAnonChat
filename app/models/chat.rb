@@ -6,12 +6,12 @@ class Chat < ActiveRecord::Base
 	scope :active, -> { where(active: true) }
 
 	def recipient sender
-		recipient
+		receiver = nil
 		if contact == sender
-			recipient = chat.friend
+			receiver = friend
 		else
-			recipient = chat.contact
+			receiver = contact
 		end
-		recipient
+		receiver
 	end
 end
