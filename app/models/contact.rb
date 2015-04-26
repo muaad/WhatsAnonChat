@@ -31,11 +31,13 @@ class Contact < ActiveRecord::Base
 			if username_exists?(message)
 				error = "The username you have chosen, #{message}, already exists. Please choose another."
 			elsif (pattern =~ message).nil?
-				error = "You sent #{message}. Your username can only contain letters, numbers or one of - and _"
-			# elsif message.split(" ").length > 1
-			# 	error = "No spaces please. Usernames should be all one word. And, try to make it short, too, so, it will be easy for people to find you."
-			# elsif is_number?(message)
-			# 	error = "You sent #{message}. Usernames cannot be a number. It should be made up of letters or a combination of letters and digits."
+				if message.split(" ").length > 1
+					error = "No spaces please. Usernames should be all one word. And, try to make it short, too, so, it will be easy for people to find you."
+				elsif is_number?(message)
+					error = "You sent #{message}. Usernames cannot be a number. It should be made up of letters or a combination of letters and digits."
+				else
+					error = "You sent #{message}. Your username can only contain letters, numbers or one of - and _"
+				end
 			end
 		elsif step == "Age"
 			# has to be number
