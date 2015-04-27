@@ -121,8 +121,20 @@ class Command < ActiveRecord::Base
 
 	def self.spin params
 		current_contact = Contact.find_by(phone_number: params[:phone_number])
-		contact = Contact.where.not(id: current_contact.id).sample
-		if current_contact.opted_in
+		contact = nil
+		msg = ""
+		if command_params(params[:text])
+			if command_params(params[:text]).downcase == "male"
+				contact = Contact.male.where.not(id: current_contact.id).sample
+			elsif command_params(params[:text]).downcase == "female"
+				contact = Contact.female.where.not(id: current_contact.id).sample
+			else
+				msg = "Sorry. We couldn't understand you. Please send /spin to get any random person, /spin/male to get a random male or /spin/female to get a random female."
+			end
+		else
+			contact = Contact.where.not(id: current_contact.id).sample
+		end
+		if current_contact.opted_in && !contact.nil?
 			msg = "Here is your random match:\n\n- @#{contact.username} - #{contact.age} | #{contact.gender} | #{contact.country}"
 		else
 			send_message params[:phone_number], "Sorry. Remember you are invisible? If people can't see you, it is only fair that you don't see them either, right? You can make yourself visible by sending in /visible/on"
