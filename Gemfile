@@ -26,6 +26,7 @@ gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
 gem 'twitter'
 gem 'vacuum'
 gem 'amazon-ecs'
+gem 'rollbar', '~> 1.5.1'
 # gem 'mysql2'
 group :development do
   gem 'better_errors'
