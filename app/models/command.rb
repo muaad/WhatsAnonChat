@@ -310,7 +310,7 @@ class Command < ActiveRecord::Base
 	end
 
 	def self.command_params message
-		message.split("/")[2].strip
+		message.split("/")[2].strip if !message.split("/")[2].nil?
 	end
 
 	def self.send_message phone_number, message
