@@ -28,6 +28,8 @@ gem 'vacuum'
 gem 'amazon-ecs'
 gem 'rollbar', '~> 1.5.1'
 gem 'mxit_api'
+# gem 'summarize'
+gem 'mechanize'
 # gem 'mysql2'
 group :development do
   gem 'better_errors'
