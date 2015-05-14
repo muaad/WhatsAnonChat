@@ -142,6 +142,22 @@ class Command < ActiveRecord::Base
 		send_message params[:phone_number], msg
 	end
 
+	def self.asl params
+		msg = ""
+		if command_params(params[:text])
+			username = command_params(params[:text]).gsub("@", "").strip
+			contact = Contact.find_by(username: username)
+			if !contact.nil?
+				msg = "Here are the details for @#{contact.username}:\n\n Age: #{contact.age} \n\nGender: #{contact.gender} \n\nLocation: #{contact.country}"
+			else
+				msg = "Sorry! We don't have a user called @#{username}. Try again."
+			end
+		else
+			msg = "This command is used to find out more about a person. ASL stands for Age, Sex(Gender), Location. This is the format: /asl/@username\nReplace @username with the username of the person whose details you want to know."
+		end
+		send_message params[:phone_number], msg
+	end
+
 	def self.news params
 		source = "dailynation"
 		src = "Daily Nation"
