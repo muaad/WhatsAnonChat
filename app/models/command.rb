@@ -176,6 +176,10 @@ class Command < ActiveRecord::Base
 				source = "AJEnglish"
 				src = "Al Jazeera"
 				category = "international news"
+			elsif command_params(params[:text]).downcase == "somali" || command_params(params[:text]).downcase == "somalia"
+				source = "BBCSomali"
+				src = "BBC Somali"
+				category = "Somali news"
 			end
 		end
 		twitter = TwitterApi.new
