@@ -17,7 +17,7 @@ class Chat < ActiveRecord::Base
 	end
 
 	def self.send_message phone_number, message
-		WhatsApp.send_message phone_number, message
+		HTTParty.post("https://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
 	end
 
 	def self.process sender, username="", message
