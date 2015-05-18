@@ -62,6 +62,19 @@ class Chat < ActiveRecord::Base
 		end
 	end
 
+	def self.message_details message
+		msg = ""
+		username = ""
+		if message.include?(":") && message.split(":")[0].split(" ").length <= 2
+			username = message.split(":")[0].gsub("@", "").strip
+			msg = message.split(":")[1..message.length].join(" ")
+		else
+			username = message.split(" ")[0].gsub("@", "")
+			msg = message.split(" ")[1..message.length].join(" ")
+		end
+		{message: msg, username: username}
+	end
+
 	def send_message phone_number, message
 		WhatsApp.send_message phone_number, message
 	end
