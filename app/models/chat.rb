@@ -15,6 +15,10 @@ class Chat < ActiveRecord::Base
 		receiver
 	end
 
+	def send_message phone_number, message
+		WhatsApp.send_message phone_number, message
+	end
+
 	def self.process sender, username="", message
 		if !username.empty?
 			recipient = Contact.find_by(username: username)
@@ -73,9 +77,5 @@ class Chat < ActiveRecord::Base
 			msg = message.split(" ")[1..message.length].join(" ")
 		end
 		{message: msg, username: username}
-	end
-
-	def send_message phone_number, message
-		WhatsApp.send_message phone_number, message
 	end
 end
