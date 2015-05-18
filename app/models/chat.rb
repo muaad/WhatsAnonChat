@@ -24,25 +24,28 @@ class Chat < ActiveRecord::Base
 		if !username.empty?
 			recipient = Contact.find_by(username: username)
 			if !recipient.nil?
-				chats = sender.chats_with(recipient)
-				if chats.empty?
-					sender.chats.update_all(active: false)
-					recipient.chats.update_all(active: false)
-					chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
-					Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+				if recipient.opted_in && sender.opted_in
+					chats = sender.chats_with(recipient)
+					if chats.empty?
+						sender.chats.update_all(active: false)
+						recipient.chats.update_all(active: false)
+						chat = Chat.find_or_create_by(contact_id: sender.id, friend_id: recipient.id)
+						Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+					else
+						sender.chats.update_all(active: false)
+						recipient.chats.update_all(active: false)
+						chat = chats.first
+						chat.active = true
+						chat.save!
+						Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+					end
+					self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"					
 				else
-					sender.chats.update_all(active: false)
-					recipient.chats.update_all(active: false)
-					chat = chats.first
-					chat.active = true
-					chat.save!
-					Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
-				end
-				if !recipient.opted_in
-					self.send_message sender.phone_number, "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
-				else
-					self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
-					# Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+					if !recipient.opted_in
+						self.send_message sender.phone_number, "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+					elsif !sender.opted_in
+						self.send_message sender.phone_number, "Hey @#{sender.username}, Remember you are invisible? If you want to be able to chat with people, make yourself visible by sending in /visible/on"
+					end
 				end
 			else
 				self.send_message sender.phone_number, "There is no user with the username @#{username}. Send /spin to get someone to talk to or /friends to get a list of the people you have chat with."
@@ -53,13 +56,21 @@ class Chat < ActiveRecord::Base
 			chat = active.nil?? last_chat : active
 			if !chat.nil?
 				recipient = chat.recipient(sender)
-				if !active.nil?
-					self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
-					Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+				if recipient.opted_in && sender.opted_in
+					if !active.nil?
+						self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}"
+						Message.create! chat: chat, body: message, from: sender.id, to: recipient.id
+					else
+						self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}\n\nYou don't have an active chat with @#{sender.username}. To reply to @#{sender.username}, start your message with @#{sender.username}."
+						Message.create! chat: sender.last_chat, body: message, from: sender.id, to: recipient.id
+						self.send_message sender.phone_number, "Your last active chat was with @#{recipient.username} who has since started another chat with someone else. Don't worry. We have delivered your message to @#{recipient.username}. You can start your message with @#{recipient.username} just to be safe."
+					end
 				else
-					self.send_message recipient.phone_number, "@#{sender.username} says:\n\n#{message}\n\nYou don't have an active chat with @#{sender.username}. To reply to @#{sender.username}, start your message with @#{sender.username}."
-					Message.create! chat: sender.last_chat, body: message, from: sender.id, to: recipient.id
-					self.send_message sender.phone_number, "Your last active chat was with @#{recipient.username} who has since started another chat with someone else. Don't worry. We have delivered your message to @#{recipient.username}. You can start your message with @#{recipient.username} just to be safe."
+					if !recipient.opted_in
+						self.send_message sender.phone_number, "@#{recipient.username} has chosen to be invisible. You won't be able to chat with #{recipient.male ? 'him' : 'her'} unless #{recipient.male ? 'he' : 'she'} is visible."
+					elsif !sender.opted_in
+						self.send_message sender.phone_number, "Hey @#{sender.username}, Remember you are invisible? If you want to be able to chat with people, make yourself visible by sending in /visible/on"
+					end
 				end
 			else
 				self.send_message sender.phone_number, "You are currently not chatting with anyone. Send /spin to find a random person to talk to. You can also search by gender. Send /search/male or /search/female. To find some help on how to chat on here, send /help/chat."
