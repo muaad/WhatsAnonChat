@@ -5,7 +5,7 @@ class SessionsController < ApplicationController
   def create
     contact = Contact.find_by(phone_number: params[:email])
     if contact && contact.authenticate(params[:password])
-      cookies.permanent[:auth_token] = user.auth_token
+      cookies.permanent[:auth_token] = contact.auth_token
       redirect_to root_url, notice: "Logged in!"
     else
       flash.now.alert = "Phone number or password is invalid"
