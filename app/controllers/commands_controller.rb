@@ -5,8 +5,10 @@ class CommandsController < ApplicationController
 			contact = Contact.find_by(phone_number: params[:phone_number])
 			if contact.nil?
 				if message.downcase == "join"
-					contact = Contact.find_or_create_by!(phone_number: params[:phone_number])
-					contact.update(name: params[:name])
+					contact = Contact.find_or_initialize_by(phone_number: params[:phone_number])
+					contact.password = SecureRandom.urlsafe_base64 if contact.new_record?
+					contact.name = params[:name]
+					contact.save!
 					set_country params[:phone_number]
 					send_message params[:phone_number], "Hi there, \nWelcome to this service. Now, all that is left for you to use this service is to complete your profile."
 					current = Progress.create! contact: contact, step: Step.first
