@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20150521144901) do
     t.string   "channel"
     t.string   "password"
     t.string   "password_confirmation"
+    t.string   "auth_token"
   end
 
   create_table "messages", force: :cascade do |t|
