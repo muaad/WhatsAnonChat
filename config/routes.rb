@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
+
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :chats
+  resources :sessions
 
   post "incoming" => "commands#incoming"
   # post "/help" => "commands#help", as: "help"
