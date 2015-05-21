@@ -1,6 +1,13 @@
 class Contact < ActiveRecord::Base
+	before_create { generate_token(:auth_token) }
 	has_secure_password
-	
+
+	def generate_token(column)
+	  begin
+	    self[column] = SecureRandom.urlsafe_base64
+	  end while Contact.exists?(column => self[column])
+	end
+
 	has_many :progress, dependent: :delete_all
 	has_many :steps, through: :progress
 	has_many :chats
