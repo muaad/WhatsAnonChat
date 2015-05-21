@@ -1,5 +1,5 @@
 class ContactsController < ApplicationController
-  before_action :set_contact, only: [:show, :edit, :update, :destroy]
+  before_action :set_contact, only: [:show, :edit, :update, :destroy, :verification, :verify]
 
   # GET /contacts
   # GET /contacts.json
@@ -24,16 +24,19 @@ class ContactsController < ApplicationController
   # POST /contacts
   # POST /contacts.json
   def create
-    @contact = Contact.new(contact_params)
-
-    respond_to do |format|
-      if @contact.save
-        format.html { redirect_to @contact, notice: 'Contact was successfully created.' }
-        format.json { render :show, status: :created, location: @contact }
-      else
-        format.html { render :new }
-        format.json { render json: @contact.errors, status: :unprocessable_entity }
+    @contact = Contact.new(params[:contact])
+    if @contact.save
+      if verification_code.nil?
+        @contact.update(verification_code: generate_verification_code)
       end
+
+      if !@contact.verified
+        Command.send_message @contact.phone_number, "Hi #{@contact.name},\n\nThanks for signing up for Spin. Just one last step. We need to verify that this is your number. Enter this verification code at spin.im #{code} and you will be able to use this service.\n\nThanks."
+      end
+      cookies.permanent[:auth_token] = @contact.auth_token
+      redirect_to root_url, notice: "Thank you for signing up!"
+    else
+      render "new"
     end
   end
 
@@ -61,6 +64,21 @@ class ContactsController < ApplicationController
     end
   end
 
+  def verification
+    
+  end
+
+  def verify
+    code = params[:verification_code]
+    matched = @contact.verification_code == code
+
+    if matched
+      redirect_to root_url, notice: "You have now been verified! Thank you."
+    else
+      render 'verification'
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_contact
@@ -69,6 +87,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:name, :phone_number, :gender, :age, :country, :username, :opted_id, :password, :password_confirmation)
+      params.require(:contact).permit(:name, :phone_number, :gender, :age, :country, :contactname, :opted_id, :password, :password_confirmation, :dob, :verification_code)
     end
 end

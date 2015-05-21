@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+
+  get "logout" => "sessions#destroy", :as => "logout"
+  get "login" => "sessions#new", :as => "login"
+  get "signup" => "contacts#new", :as => "signup"
+
+  get "contacts/:id/verification" => "contacts#verification", :as => "verification"
+  post "contacts/:id/verify" => "contacts#verify", as: "verify"
+
   resources :chats
   resources :sessions
 
