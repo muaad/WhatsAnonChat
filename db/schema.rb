@@ -37,13 +37,15 @@ ActiveRecord::Schema.define(version: 20150521144901) do
     t.integer  "age"
     t.string   "country"
     t.string   "username"
-    t.boolean  "opted_in",              default: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.boolean  "opted_in",          default: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.string   "channel"
-    t.string   "password"
-    t.string   "password_confirmation"
+    t.string   "password_digest"
     t.string   "auth_token"
+    t.string   "verification_code"
+    t.boolean  "verified",          default: false
+    t.datetime "dob"
   end
 
   create_table "messages", force: :cascade do |t|
