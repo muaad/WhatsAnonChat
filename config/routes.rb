@@ -11,6 +11,9 @@ Rails.application.routes.draw do
 
   get 'commands/outgoing'
 
+  post "/send_message" => "chats#send_message", as: "send_message"
+  post "/send_image" => "chats#send_image", as: "send_image"
+
   resources :contacts
 
   root to: 'visitors#index'

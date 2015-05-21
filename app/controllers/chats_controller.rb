@@ -1,3 +1,4 @@
+require "whatsapp"
 class ChatsController < ApplicationController
   before_action :set_chat, only: [:show, :edit, :update, :destroy]
 
@@ -59,6 +60,16 @@ class ChatsController < ApplicationController
       format.html { redirect_to chats_url, notice: 'Chat was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def send_message
+    Command.send_message params[:phone_number], params[:text]
+    render json: {success: true}
+  end
+
+  def send_image
+    WhatsApp.send_image params[:phone_number], params[:image_url]}
+    render json: {success: true}
   end
 
   private
