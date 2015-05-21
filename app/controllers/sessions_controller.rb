@@ -3,18 +3,18 @@ class SessionsController < ApplicationController
   end
   
   def create
-    user = Contact.find_by_email(params[:email])
-    if user && user.authenticate(params[:password])
-      session[:user_id] = user.id
+    contact = Contact.find_by(phone_number: params[:email])
+    if contact && contact.authenticate(params[:password])
+      cookies.permanent[:auth_token] = user.auth_token
       redirect_to root_url, notice: "Logged in!"
     else
-      flash.now.alert = "Email or password is invalid"
+      flash.now.alert = "Phone number or password is invalid"
       render "new"
     end
   end
   
   def destroy
-    session[:user_id] = nil
+    cookies.delete(:auth_token)
     redirect_to root_url, notice: "Logged out!"
   end
 end
