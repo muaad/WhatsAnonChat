@@ -1,4 +1,6 @@
 class Contact < ActiveRecord::Base
+	has_secure_password
+	
 	has_many :progress, dependent: :delete_all
 	has_many :steps, through: :progress
 	has_many :chats
