@@ -18,6 +18,15 @@
 		/ 	%li
 		/ 		%a{:href => "index.html#signuptoday"}
 		/ 			Sign up for Ongair
-					%span.indicator
-						%i.fa.fa-angle-right
+		/ 			%span.indicator
+		/ 				%i.fa.fa-angle-right
 		.menu-open
+		.pull-right.naver
+			%form.form-inline{:role => "form"}
+				.form-group
+					%label.sr-only{:for => "exampleInputEmail2"} Phone Number
+					%input#exampleInputEmail2.form-control{:placeholder => "Enter email", :type => "email"}
+				.form-group
+					%label.sr-only{:for => "exampleInputPassword2"} Password
+					%input#exampleInputPassword2.form-control{:placeholder => "Password", :type => "password"}
+				%button.btn.btn-primary{"data-original-title" => "", :title => "", :type => "submit"} Sign in

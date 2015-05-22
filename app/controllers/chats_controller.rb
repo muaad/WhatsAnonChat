@@ -68,7 +68,7 @@ class ChatsController < ApplicationController
   end
 
   def send_image
-    WhatsApp.send_image params[:phone_number], params[:image_url]}
+    WhatsApp.send_image params[:phone_number], params[:image_url]
     render json: {success: true}
   end
 

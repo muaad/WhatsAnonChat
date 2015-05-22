@@ -26,6 +26,6 @@ Rails.application.routes.draw do
 
   resources :contacts
 
-  root to: 'visitors#index'
+  root to: 'home#index'
   devise_for :users
 end

@@ -1,0 +1,40 @@
+= form_for Contact.new do |f|
+	.panel-body
+		.form-group
+			.iconic-input
+				%i.fa.fa-user
+				= f.text_field :name, class: "form-control", placeholder: "Name"
+		.form-group
+			.iconic-input
+				%i.fa.fa-phone
+				= f.text_field :phone_number, class: "form-control", placeholder: "Phone number"
+		.form-group
+			.iconic-input
+				%i.fa.fa-phone
+				= f.text_field :username, class: "form-control", placeholder: "Username"
+		.form-group
+			.iconic-input
+				%i.fa.fa-user
+				= f.text_field :password, class: "form-control", placeholder: "Password"
+		.form-group
+			.iconic-input
+				%i.fa.fa-phone
+				= f.text_field :password_confirmation, class: "form-control", placeholder: "Password Confirmation"
+		.form-group
+			.iconic-input
+				%i.fa.fa-calendar
+				= f.text_field :dob, class: "datetimepicker form-control", placeholder: "Date of Birth"
+		.form-group
+			/ = f.label :gender
+			/ %input{type: "radio", name: "contact[gender]", value: "Male", class: "form-control"}
+			/ 	Male
+			/ %input{type: "radio", name: "contact[gender]", value: "Female", class: "form-control"}
+			/ 	Female
+			%label.label_radio.col-lg-6.col-sm-6{:for => "radio-01"}
+				%input#radio-01{:checked => "", :name => "contact[gender]", :type => "radio", :value => "Male"}/
+				Male
+			%label.label_radio.col-lg-6.col-sm-6{:for => "radio-02"}
+				%input#radio-02{:name => "contact[gender]", :type => "radio", :value => "Female"}/
+				Female
+		.actions
+			= f.submit 'JOIN', class: 'btn btn-lg btn-success pull-right'
