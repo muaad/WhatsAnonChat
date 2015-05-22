@@ -24,16 +24,16 @@ class ContactsController < ApplicationController
   # POST /contacts
   # POST /contacts.json
   def create
-    @contact = Contact.new(params[:contact])
+    @contact = Contact.new(contact_params)
     if @contact.save
-      if verification_code.nil?
+      if @contact.verification_code.nil?
         @contact.update(verification_code: generate_verification_code)
       end
 
       if !@contact.verified
-        Command.send_message @contact.phone_number, "Hi #{@contact.name},\n\nThanks for signing up for Spin. Just one last step. We need to verify that this is your number. Enter this verification code at spin.im #{code} and you will be able to use this service.\n\nThanks."
+        Command.send_message @contact.phone_number, "Hi #{@contact.name},\n\nThanks for signing up for Spin. Just one last step. We need to verify that this is your number. Enter this verification code at spin.im #{@contact.verification_code} and you will be able to use this service.\n\nThanks."
       end
-      cookies.permanent[:auth_token] = @contact.auth_token
+      cookies.permanent[:spin_auth_token] = @contact.auth_token
       redirect_to root_url, notice: "Thank you for signing up!"
     else
       render "new"
@@ -58,6 +58,7 @@ class ContactsController < ApplicationController
   # DELETE /contacts/1.json
   def destroy
     @contact.destroy
+    cookies.delete(:spin_auth_token)
     respond_to do |format|
       format.html { redirect_to contacts_url, notice: 'Contact was successfully destroyed.' }
       format.json { head :no_content }
@@ -87,6 +88,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:name, :phone_number, :gender, :age, :country, :contactname, :opted_id, :password, :password_confirmation, :dob, :verification_code)
+      params.require(:contact).permit(:name, :phone_number, :gender, :age, :country, :opted_id, :password, :password_confirmation, :dob, :verification_code)
     end
 end
