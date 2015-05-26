@@ -10,4 +10,5 @@
 # Environment variables (ENV['...']) can be set in the file config/application.yml.
 # See http://railsapps.github.io/rails-environment-variables.html
 
-Contact.update_all(opted_in: true)
+# Contact.update_all(opted_in: true)
+Contact.update_all(auth_token: SecureRandom.urlsafe_base64)
