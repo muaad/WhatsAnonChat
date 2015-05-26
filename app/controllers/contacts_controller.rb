@@ -38,7 +38,7 @@ class ContactsController < ApplicationController
     # else
     #   render "new"
     # end
-    contact = Contact.last
+    contact = Contact.find_by(phone_number: contact_params[:phone_number])
     cookies.permanent[:spin_auth_token] = contact.auth_token if contact
     render json: {success: true}
   end
