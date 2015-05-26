@@ -79,8 +79,6 @@ class Contact < ActiveRecord::Base
 	end
 
 	def chats_with contact
-		# Chat.where("(contact_id = ? AND friend_id = ?) OR (contact_id = ? AND friend_id = ?)", 
-		# 	id, contact.id, contact.id, id)
 		chats.where("contact_id = ? OR friend_id = ?", contact.id, contact.id)
 	end
 
@@ -89,7 +87,19 @@ class Contact < ActiveRecord::Base
 	end
 
 	def active_chats
-		Chat.active.where("contact_id = ? OR friend_id = ?", id, id)
+		# Chat.active.where("contact_id = ? OR friend_id = ?", id, id)
+		chats.active
+	end
+
+	def buddies
+		buds = []
+		chats.each do |chat|
+			recipient = chat.recipient(self)
+			if !recipient.nil?
+				buds << "@#{recipient.username}"
+			end
+		end
+		buds
 	end
 
 	def self.username_exists? username
