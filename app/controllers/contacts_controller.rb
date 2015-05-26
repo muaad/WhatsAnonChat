@@ -24,20 +24,23 @@ class ContactsController < ApplicationController
   # POST /contacts
   # POST /contacts.json
   def create
-    @contact = Contact.new(contact_params)
-    if @contact.save
-      if @contact.verification_code.nil?
-        @contact.update(verification_code: generate_verification_code)
-      end
+    # @contact = Contact.new(contact_params)
+    # if @contact.save
+    #   if @contact.verification_code.nil?
+    #     @contact.update(verification_code: generate_verification_code)
+    #   end
 
-      if !@contact.verified
-        Command.send_message @contact.phone_number, "Hi #{@contact.name},\n\nThanks for signing up for Spin. Just one last step. We need to verify that this is your number. Enter this verification code at spin.im #{@contact.verification_code} and you will be able to use this service.\n\nThanks."
-      end
-      cookies.permanent[:spin_auth_token] = @contact.auth_token
-      redirect_to root_url, notice: "Thank you for signing up!"
-    else
-      render "new"
-    end
+    #   if !@contact.verified
+    #     Command.send_message @contact.phone_number, "Hi #{@contact.name},\n\nThanks for signing up for Spin. Just one last step. We need to verify that this is your number. Enter this verification code at spin.im #{@contact.verification_code} and you will be able to use this service.\n\nThanks."
+    #   end
+    #   cookies.permanent[:spin_auth_token] = @contact.auth_token
+    #   redirect_to root_url, notice: "Thank you for signing up!"
+    # else
+    #   render "new"
+    # end
+    contact = Contact.last
+    cookies.permanent[:spin_auth_token] = contact.auth_token if contact
+    render json: {success: true}
   end
 
   # PATCH/PUT /contacts/1
@@ -78,6 +81,11 @@ class ContactsController < ApplicationController
     else
       render 'verification'
     end
+  end
+
+  def friends
+    contact = Contact.find_by(auth_token: params[:auth_token])
+    render json: {friends: contact.buddies}
   end
 
   private
