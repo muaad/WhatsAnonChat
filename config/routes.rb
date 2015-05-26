@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   post "/send_message" => "chats#send_message", as: "send_message"
   post "/send_image" => "chats#send_image", as: "send_image"
 
+  get "contacts/:auth_token/friends" => "contacts#friends", :as => "friends"
+
   resources :contacts
 
   root to: 'home#index'

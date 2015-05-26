@@ -63,7 +63,9 @@ class ChatsController < ApplicationController
   end
 
   def send_message
-    Command.send_message params[:phone_number], params[:text]
+    # Command.send_message params[:phone_number], params[:text]
+    sender = Contact.find_by(auth_token: params[:authToken])
+    Chat.process sender, params[:username].gsub("@", ""), params[:text]
     render json: {success: true}
   end
 
