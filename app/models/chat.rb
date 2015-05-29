@@ -18,6 +18,11 @@ class Chat < ActiveRecord::Base
 
 	def self.send_message phone_number, message
 		HTTParty.post("https://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
+		recipient = message_details message
+		sender = Contact.find_by(phone_number: phone_number)
+		if recipient.on_slack
+			Slack.send("@#{sender.username} says:\n\n#{message}")
+		end
 	end
 
 	def self.process sender, username="", message
