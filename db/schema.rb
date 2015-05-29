@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150527140535) do
+ActiveRecord::Schema.define(version: 20150529211812) do
 
   create_table "chats", force: :cascade do |t|
     t.integer  "contact_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20150527140535) do
     t.boolean  "verified",          default: false
     t.datetime "dob"
     t.boolean  "on_slack",          default: false
+    t.string   "slack_token"
   end
 
   create_table "messages", force: :cascade do |t|
