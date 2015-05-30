@@ -62,10 +62,20 @@ class ChatsController < ApplicationController
     end
   end
 
-  def send_message
-    # Command.send_message params[:phone_number], params[:text]
-    sender = Contact.find_by(auth_token: params[:authToken])
-    Chat.process sender, params[:username].gsub("@", ""), params[:text]
+  def send_message 
+    sender = nil
+    message = params[:text]
+    msg = Chat.message_details(message)[:message]
+    recepient = Chat.message_details(message)[:username]
+    if params[:token] && params[:team_domain]
+      sender = Contact.find_by(slack_token: token)
+    elsif params[:authToken]
+      sender = Contact.find_by(auth_token: params[:authToken])
+    end
+    
+    if !sender.nil?
+      Chat.process sender, recepient, msg
+    end
     render json: {success: true}
   end
 
