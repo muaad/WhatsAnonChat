@@ -236,6 +236,21 @@ class Command < ActiveRecord::Base
 		end
 	end
 
+	def traffic params
+		twitter = TwitterApi.new
+		tweet = command_params params[:text]
+		# credits = " - by @#{Contact.find_by(phone_number: params[:phone_number]).username}"
+		if !tweet.empty?
+			if tweet.length <= 140 #(140 - credits.length)
+				twitter.update(tweet, "ma3route")
+			else
+				send_message params[:phone_number], "Your message is too long. Try not to exceed 140 characters. Don't know the rationale behind it but that is what Twitter insists on."
+			end
+		else
+			send_message params[:phone_number], "This lets you report some traffic situation. Your report is then tweeted at @ma3route who normally track traffic information on Twitter.\n\nIt take this format:\n\n/traffic/your_traffic_update\n\nFor example, you could send:\n\n/traffic/Crazy traffic jam on Mombasa Road. Barely moving."
+		end
+	end
+
 	def self.games params
 		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
 	end
