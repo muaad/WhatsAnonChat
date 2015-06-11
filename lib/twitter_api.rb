@@ -11,4 +11,13 @@ class TwitterApi
 	def tweets user
 		client.user_timeline(user).reject{|t| t.retweet?}
 	end
+
+	def update msg, receipient
+		if !receipient.nil?
+			message = "@#{receipient} #{msg}"
+		else
+			message = msg
+		end
+		client.update(message)
+	end
 end
