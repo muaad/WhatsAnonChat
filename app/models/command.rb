@@ -237,7 +237,7 @@ class Command < ActiveRecord::Base
 		end
 	end
 
-	def traffic params
+	def self.traffic params
 		twitter = TwitterApi.new
 		tweet = command_params params[:text]
 		# credits = " - by @#{Contact.find_by(phone_number: params[:phone_number]).username}"
