@@ -13,7 +13,7 @@ class TwitterApi
 	end
 
 	def update msg, receipient
-		if !receipient.nil?
+		if !receipient.empty?
 			message = "@#{receipient} #{msg}"
 		else
 			message = msg
