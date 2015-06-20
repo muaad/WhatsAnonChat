@@ -243,7 +243,7 @@ class Command < ActiveRecord::Base
 		# credits = " - by @#{Contact.find_by(phone_number: params[:phone_number]).username}"
 		if !tweet.nil?
 			if tweet.length <= 140 #(140 - credits.length)
-				twitter.update(tweet, "")
+				twitter.update(tweet, "ma3route")
 			else
 				send_message params[:phone_number], "Your message is too long. Try not to exceed 140 characters. Don't know the rationale behind it but that is what Twitter insists on."
 			end
