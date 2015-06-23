@@ -27,7 +27,7 @@ class Chat < ActiveRecord::Base
 
 	def self.process sender, username="", message
 		if !username.empty?
-			recipient = Contact.find_by(username: username)
+			recipient = Contact.where('username ilike ?', username)
 			if !recipient.nil?
 				if recipient.opted_in && sender.opted_in
 					chats = sender.chats_with(recipient)
