@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150623203808) do
+ActiveRecord::Schema.define(version: 20150623204027) do
+
+  create_table "broadcast_hash_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "broadcasts", force: :cascade do |t|
     t.text     "text"
