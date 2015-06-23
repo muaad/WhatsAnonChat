@@ -14,9 +14,14 @@
 ActiveRecord::Schema.define(version: 20150623204027) do
 
   create_table "broadcast_hash_tags", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "broadcast_id"
+    t.integer  "hash_tag_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
+
+  add_index "broadcast_hash_tags", ["broadcast_id"], name: "index_broadcast_hash_tags_on_broadcast_id"
+  add_index "broadcast_hash_tags", ["hash_tag_id"], name: "index_broadcast_hash_tags_on_hash_tag_id"
 
   create_table "broadcasts", force: :cascade do |t|
     t.text     "text"
