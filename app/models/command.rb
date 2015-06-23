@@ -252,6 +252,16 @@ class Command < ActiveRecord::Base
 		end
 	end
 
+	def self.broadcast params
+		st = command_params params[:text]
+		contact = Contact.find_by phone_number: params[:phone_number]
+		if !st.nil?
+			Broadcast.create! text: st, contact: contact
+		else
+			send_message params[:phone_number], "This lets you share your thoughts with the Spin community"
+		end
+	end
+
 	def self.games params
 		send_message params[:phone_number], "Sorry. We are still working on that. Coming soon. Watch this space...."
 	end
