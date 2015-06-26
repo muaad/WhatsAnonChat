@@ -39,7 +39,7 @@ class CommandsController < ApplicationController
 						if !msg.blank?
 							Chat.process sender, username, msg
 						else
-							send_message sender.phone_number, "A chat has been initiated with @#{recipient.username} but you haven't included a message. Send your message now."
+							send_message sender.phone_number, "A chat has been initiated with @#{username} but you haven't included a message. Send your message now."
 						end
 					else
 						send_message params[:phone_number], "Looks like you are trying to chat with yourself. :) Send /spin to find someone to chat with or /friends to get a list of the people you have chat with. Send /help if you are not sure. Want some smart guy to talk to straight away, say hi to @smartie; for example, send @smartie hi."
