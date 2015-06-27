@@ -32,12 +32,19 @@ class CommandsController < ApplicationController
 			else
 				if message.start_with?("@")
 					msg = Chat.message_details(message)[:message]
-					username = Chat.message_details(message)[:username]
+					# username = Chat.message_details(message)[:username]
 					recipient = Contact.where("username ilike ?", username).first
 					sender = Contact.find_by(phone_number: params[:phone_number])
+					usernames = Message.get_usernames(message) - [sender.username]
 					if recipient != sender
 						if !msg.blank?
-							Chat.process sender, username, msg
+							if !usernames.empty?
+								usernames.each do |username|
+									Chat.process sender, username.gsub("@", ""), msg
+								end
+							else
+								Chat.process sender, "", msg
+							end
 						else
 							send_message sender.phone_number, "A chat has been initiated with @#{username} but you haven't included a message. Send your message now."
 						end
