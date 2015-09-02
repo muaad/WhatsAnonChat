@@ -82,9 +82,9 @@ class CommandsController < ApplicationController
 				usernames = message.split(" ").collect{|s| s.sub!(/[?.!,;:]?$/, '') if s.start_with?("@")}.compact
 				usernames.each do |username|
 					username = username.gsub!("@", "")
-					contact = Contact.find_by username: username
-					if !contact.nil?
-						send_message contact.phone_number, "You have a new message from  on the group: {{group_name}}\n\n#{message}"
+					recipient = Contact.find_by username: username
+					if !recipient.nil?
+						send_message recipient.phone_number, "You have a new message from  on the group: {{group_name}}\n\n#{message}"
 					end
 				end
 				if contact.username.empty?
