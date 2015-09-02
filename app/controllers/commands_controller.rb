@@ -59,6 +59,7 @@ class CommandsController < ApplicationController
 			contact.age = "UNKNOWN"
 			contact.gender = "UNKNOWN"
 			contact.save!
+			set_country params[:phone_number]
 			message = params[:text]
 			create_ongair_contact params[:phone_number]
 			if message.start_with?("/profile")
