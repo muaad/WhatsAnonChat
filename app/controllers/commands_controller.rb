@@ -53,13 +53,16 @@ class CommandsController < ApplicationController
 			end
 			render json: {succes: true}
 		elsif params[:notification_type] == "GroupMessageReceived"
-			contact = Contact.find_or_initialize_by(phone_number: params[:phone_number])
-			contact.password = SecureRandom.urlsafe_base64 if contact.new_record?
-			contact.name = params[:name]
-			contact.age = "UNKNOWN"
-			contact.gender = "UNKNOWN"
-			contact.save!
-			set_country params[:phone_number]
+			contact = Contact.find_by(phone_number: params[:phone_number])
+			if contact.nil?
+				contact = Contact.find_or_initialize_by(phone_number: params[:phone_number])
+				contact.password = SecureRandom.urlsafe_base64 if contact.new_record?
+				contact.name = params[:name]
+				contact.age = "UNKNOWN"
+				contact.gender = "UNKNOWN"
+				contact.save!
+				set_country params[:phone_number]
+			end
 			message = params[:text]
 			create_ongair_contact params[:phone_number]
 			if message.start_with?("/profile")
@@ -82,6 +85,11 @@ class CommandsController < ApplicationController
 					contact = Contact.find_by username: username
 					if !contact.nil?
 						send_message contact.phone_number, "You have a new message from  on the group: {{group_name}}\n\n#{message}"
+					end
+				end
+				if contact.username.empty?
+					if !Contact.find_by(username: usernames.first).nil?
+						send_message contact.phone_number, "Hi #{params[:name]},\n\nWe have notified #{usernames.to_sentence} of your message in the group. You can set up your Spin username by replying with:\n\n /profile/username:your_username.\n\n Replace your_username with the username you want to use. To find out more on how to setup your profile, send:\n\n/profile\n\nThank you."
 					end
 				end
 			end
