@@ -52,6 +52,38 @@ class CommandsController < ApplicationController
 				end
 			end
 			render json: {succes: true}
+		elsif params[:notification_type] == "GroupMessageReceived"
+			contact = Contact.find_or_initialize_by(phone_number: params[:phone_number])
+			contact.password = SecureRandom.urlsafe_base64 if contact.new_record?
+			contact.name = params[:name]
+			contact.age = "UNKNOWN"
+			contact.gender = "UNKNOWN"
+			contact.save!
+			message = params[:text]
+			create_ongair_contact params[:phone_number]
+			if message.start_with?("/profile")
+				# if command_params(message) && command_params(message).include?(":")
+				# 	field = command_params(message).split(":")[0].downcase.strip
+				# 	value = command_params(message).split(":")[1].downcase.strip
+				# 	if field.downcase == "username"
+				# 		if !Contact.username_exists?(value)
+				# 			contact.update(username: value)
+				# 		end
+				# 	end
+				# end
+				Command.profile(params)
+				p = Progress.find_or_create_by! contact_id: contact.id
+				p.update(step: Step.last)
+			else
+				usernames = message.split(" ").collect{|s| s.sub!(/[?.!,;:]?$/, '') if s.start_with?("@")}.compact
+				usernames.each do |username|
+					username = username.gsub!("@", "")
+					contact = Contact.find_by username: username
+					if !contact.nil?
+						send_message contact.phone_number, "You have a new message from  on the group: {{group_name}}\n\n#{message}"
+					end
+				end
+			end
 		else
 			render json: {succes: true}
 		end
