@@ -13,6 +13,15 @@
 
 ActiveRecord::Schema.define(version: 20151124152052) do
 
+  create_table "accounts", force: :cascade do |t|
+    t.string   "name"
+    t.boolean  "setup"
+    t.string   "account_type"
+    t.string   "email"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "broadcast_hash_tags", force: :cascade do |t|
     t.integer  "broadcast_id"
     t.integer  "hash_tag_id"
@@ -67,6 +76,8 @@ ActiveRecord::Schema.define(version: 20151124152052) do
     t.datetime "dob"
     t.boolean  "on_slack",          default: false
     t.string   "slack_token"
+    t.float    "latitude"
+    t.float    "longitude"
     t.string   "network",           default: "WhatsApp"
   end
 
@@ -104,7 +115,10 @@ ActiveRecord::Schema.define(version: 20151124152052) do
     t.text     "prompt"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "wizard_id"
   end
+
+  add_index "steps", ["wizard_id"], name: "index_steps_on_wizard_id"
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -120,9 +134,22 @@ ActiveRecord::Schema.define(version: 20151124152052) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
+    t.integer  "account_id"
+    t.float    "latitude"
+    t.float    "longitude"
   end
 
+  add_index "users", ["account_id"], name: "index_users_on_account_id"
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "wizards", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "wizards", ["account_id"], name: "index_wizards_on_account_id"
 
 end
