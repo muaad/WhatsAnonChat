@@ -32,6 +32,7 @@ gem 'mxit_api'
 # gem 'summarize'
 gem 'mechanize'
 gem 'telegrammer'
+gem 'geocoder'
 # gem 'mysql2'
 group :development do
   gem 'better_errors'
