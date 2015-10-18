@@ -1,4 +1,7 @@
 class Contact < ActiveRecord::Base
+	reverse_geocoded_by :latitude, :longitude
+	after_validation :reverse_geocode
+	
 	before_create { generate_token(:auth_token) }
 	has_secure_password
 
