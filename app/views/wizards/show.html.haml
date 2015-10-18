@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @wizard.name
+%p
+  %b Account:
+  = @wizard.account
+
+= link_to 'Edit', edit_wizard_path(@wizard)
+\|
+= link_to 'Back', wizards_path

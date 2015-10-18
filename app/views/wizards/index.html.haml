@@ -1,0 +1,23 @@
+%h1 Listing wizards
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Account
+      %th
+      %th
+      %th
+
+  %tbody
+    - @wizards.each do |wizard|
+      %tr
+        %td= wizard.name
+        %td= wizard.account
+        %td= link_to 'Show', wizard
+        %td= link_to 'Edit', edit_wizard_path(wizard)
+        %td= link_to 'Destroy', wizard, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Wizard', new_wizard_path

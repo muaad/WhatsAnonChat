@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :wizards
+
   resources :accounts
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
