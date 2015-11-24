@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150623204027) do
+ActiveRecord::Schema.define(version: 20151124152052) do
 
   create_table "broadcast_hash_tags", force: :cascade do |t|
     t.integer  "broadcast_id"
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(version: 20150623204027) do
     t.string   "country"
     t.string   "username"
     t.boolean  "opted_in",          default: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.string   "channel"
     t.string   "password_digest"
     t.string   "auth_token"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20150623204027) do
     t.datetime "dob"
     t.boolean  "on_slack",          default: false
     t.string   "slack_token"
+    t.string   "network",           default: "WhatsApp"
   end
 
   create_table "hash_tags", force: :cascade do |t|
