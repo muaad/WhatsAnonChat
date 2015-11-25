@@ -105,10 +105,12 @@ class CommandsController < ApplicationController
 
 	def set_country phone_number
 		contact = Contact.find_by(phone_number: phone_number)
-		country_code = Phony.split(phone_number)[0]
-		country = Country.find_all_by_country_code(country_code)[0][1]["name"]
-		# short_name = Country.find_all_by_country_code(country_code)[0][1]["alpha2"].downcase
-		contact.country = country
-		contact.save!
+		if contact.network == "WhatsApp"
+			country_code = Phony.split(phone_number)[0]
+			country = Country.find_all_by_country_code(country_code)[0][1]["name"]
+			# short_name = Country.find_all_by_country_code(country_code)[0][1]["alpha2"].downcase
+			contact.country = country
+			contact.save!
+		end
 	end
 end
