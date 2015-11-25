@@ -26,6 +26,8 @@ Rails.application.routes.draw do
 
   get "contacts/:auth_token/friends" => "contacts#friends", :as => "friends"
 
+  match 'bots/updates', to: 'telegram#handle_updates', as: 'handle_updates', via: 'post'
+
   resources :contacts
 
   root to: 'home#index'
