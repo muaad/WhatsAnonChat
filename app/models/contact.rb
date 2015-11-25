@@ -14,8 +14,8 @@ class Contact < ActiveRecord::Base
 	has_many :friends, :through => :chats
 
 	scope :opted_in, -> { where(opted_in: true) }
-	scope :male, -> { where("gender ilike 'male'") }
-	scope :female, -> { where("gender ilike 'female'") }
+	scope :male, -> { where("gender like 'male'") }
+	scope :female, -> { where("gender like 'female'") }
 
 	def complete_profile step, value
 		begin
@@ -103,6 +103,6 @@ class Contact < ActiveRecord::Base
 	end
 
 	def self.username_exists? username
-		!Contact.where("username ilike '#{username}'").empty?
+		!Contact.where("username like '#{username}'").empty?
 	end
 end

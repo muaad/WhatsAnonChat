@@ -1,3 +1,4 @@
+require "telegram"
 class CommandsController < ApplicationController
 	def incoming
 		if params[:notification_type] == "MessageReceived"
@@ -8,6 +9,7 @@ class CommandsController < ApplicationController
 					contact = Contact.find_or_initialize_by(phone_number: params[:phone_number])
 					contact.password = SecureRandom.urlsafe_base64 if contact.new_record?
 					contact.name = params[:name]
+					contact.network = params[:network] if !params[:network].blank?
 					contact.save!
 					set_country params[:phone_number]
 					send_message params[:phone_number], "Hi there, \nWelcome to this service. Now, all that is left for you to use this service is to complete your profile."
@@ -33,7 +35,7 @@ class CommandsController < ApplicationController
 				if message.start_with?("@")
 					msg = Chat.message_details(message)[:message]
 					username = Chat.message_details(message)[:username]
-					recipient = Contact.where("username ilike ?", username).first
+					recipient = Contact.where("username like ?", username).first
 					sender = Contact.find_by(phone_number: params[:phone_number])
 					if recipient != sender
 						if !msg.blank?
@@ -70,7 +72,7 @@ class CommandsController < ApplicationController
 				contact.complete_profile(current.step, message)
 				if !contact.profile_incomplete
 					contact.update(opted_in: true)
-					send_message "254722778438", "New sign up: \n#{contact.username} | #{contact.age} | #{contact.gender} | #{contact.country} | #{contact.name}"
+					WhatsApp.send_message "254722778438", "New sign up: \n#{contact.username} | #{contact.age} | #{contact.gender} | #{contact.country} | #{contact.name}"
 				end
 				current.update(step_id: current.step.next_step_id)
 				send_message phone_number, current.step.prompt
@@ -84,11 +86,11 @@ class CommandsController < ApplicationController
 	end
 
 	def send_message phone_number, message
-		HTTParty.post("https://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
+		Message.send_text(Contact.find_by(phone_number: phone_number), message)
 	end
 
 	def create_ongair_contact phone_number
-		HTTParty.post("https://app.ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
+		HTTParty.post("https://ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
 	end
 
 	def command message

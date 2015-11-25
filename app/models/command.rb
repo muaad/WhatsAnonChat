@@ -329,9 +329,9 @@ class Command < ActiveRecord::Base
 					
 				end
 				if q.split(":")[0].downcase != "age"
-					q_others << " AND #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
+					q_others << " AND #{q.split(":")[0]} like '#{q.split(":")[1]}'"
 				# else
-				# 	query << " #{q.split(":")[0]} ilike '#{q.split(":")[1]}'"
+				# 	query << " #{q.split(":")[0]} like '#{q.split(":")[1]}'"
 				end
 			end
 			if q_age.empty?
@@ -351,7 +351,7 @@ class Command < ActiveRecord::Base
 			else
 				q_age = "age = #{age}"
 			end
-			query = "#{q_age} AND gender ilike '#{gender}' AND country ilike '#{location}'"
+			query = "#{q_age} AND gender like '#{gender}' AND country like '#{location}'"
 		end
 		query
 	end
@@ -361,10 +361,10 @@ class Command < ActiveRecord::Base
 	end
 
 	def self.send_message phone_number, message
-		HTTParty.post("https://app.ongair.im/api/v1/base/send?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, text: message, thread: true})
+		Message.send_text(Contact.find_by(phone_number: phone_number), message)
 	end
 
 	def self.create_ongair_contact phone_number
-		HTTParty.post("https://app.ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
+		HTTParty.post("https://ongair.im/api/v1/base/create_contact?token=#{Rails.application.secrets.ongair_token}", body: {phone_number: phone_number, name: "anon"})
 	end
 end
